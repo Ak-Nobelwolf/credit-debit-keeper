@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { TransactionCard } from "@/components/TransactionCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { Input } from "@/components/ui/input";
-import { Search, SortDesc, Calendar, Moon, Sun, PieChart } from "lucide-react";
+import { Search, Calendar, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -12,7 +12,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { useTheme } from "next-themes";
 import {
   ResponsiveContainer,
   PieChart as PieChartComponent,
@@ -117,31 +116,8 @@ const Index = () => {
     });
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 animate-fadeIn">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowChart(!showChart)}
-            className="h-10 w-10"
-          >
-            <PieChart className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="h-10 w-10"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-
+    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8 animate-fadeIn">
+      <div className="max-w-4xl mx-auto space-y-6 pt-14 lg:pt-0">
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
             <h2 className="text-sm font-medium text-muted-foreground mb-2">Total Balance</h2>
@@ -153,12 +129,9 @@ const Index = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Income</p>
                 <p className="text-xl font-semibold text-income">
-                  +$
-                  {transactions
-                    .filter(
-                      (t) =>
-                        t.type === "credit" &&
-                        new Date(t.date).getMonth() === new Date().getMonth()
+                  +${transactions
+                    .filter(t => t.type === "credit" &&
+                      new Date(t.date).getMonth() === new Date().getMonth()
                     )
                     .reduce((acc, curr) => acc + curr.amount, 0)
                     .toFixed(2)}
@@ -167,12 +140,9 @@ const Index = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Expenses</p>
                 <p className="text-xl font-semibold text-expense">
-                  -$
-                  {transactions
-                    .filter(
-                      (t) =>
-                        t.type === "debit" &&
-                        new Date(t.date).getMonth() === new Date().getMonth()
+                  -${transactions
+                    .filter(t => t.type === "debit" &&
+                      new Date(t.date).getMonth() === new Date().getMonth()
                     )
                     .reduce((acc, curr) => acc + curr.amount, 0)
                     .toFixed(2)}
@@ -180,6 +150,76 @@ const Index = () => {
               </div>
             </div>
           </Card>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              className="pl-10"
+              placeholder="Search transactions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full sm:w-[180px]">
+                <Calendar className="mr-2 h-4 w-4" />
+                Date Range
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                initialFocus
+                mode="range"
+                defaultMonth={startDate}
+                selected={{
+                  from: startDate,
+                  to: endDate,
+                }}
+                onSelect={(range) => {
+                  setStartDate(range?.from);
+                  setEndDate(range?.to);
+                }}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Select 
+            value={`${sortBy}-${sortOrder}`} 
+            onValueChange={(value) => {
+              const [by, order] = value.split("-") as ["date" | "amount", "asc" | "desc"];
+              setSortBy(by);
+              setSortOrder(order);
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date-desc">Newest First</SelectItem>
+              <SelectItem value="date-asc">Oldest First</SelectItem>
+              <SelectItem value="amount-desc">Highest Amount</SelectItem>
+              <SelectItem value="amount-asc">Lowest Amount</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Card className="p-4">
@@ -233,76 +273,6 @@ const Index = () => {
             </div>
           )}
         </Card>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              className="pl-10"
-              placeholder="Search transactions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[180px]">
-                <Calendar className="mr-2 h-4 w-4" />
-                Date Range
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CalendarComponent
-                initialFocus
-                mode="range"
-                defaultMonth={startDate}
-                selected={{
-                  from: startDate,
-                  to: endDate,
-                }}
-                onSelect={(range) => {
-                  setStartDate(range?.from);
-                  setEndDate(range?.to);
-                }}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Select 
-            value={`${sortBy}-${sortOrder}`} 
-            onValueChange={(value) => {
-              const [by, order] = value.split("-") as ["date" | "amount", "asc" | "desc"];
-              setSortBy(by);
-              setSortOrder(order);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date-desc">Newest First</SelectItem>
-              <SelectItem value="date-asc">Oldest First</SelectItem>
-              <SelectItem value="amount-desc">Highest Amount</SelectItem>
-              <SelectItem value="amount-asc">Lowest Amount</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
         <div className="space-y-4">
           {filteredTransactions.map((transaction) => (
