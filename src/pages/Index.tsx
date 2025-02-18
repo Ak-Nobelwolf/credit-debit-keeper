@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { TransactionCard } from "@/components/TransactionCard";
@@ -48,7 +47,7 @@ const Index = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const addTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
     setTransactions([
@@ -82,7 +81,7 @@ const Index = () => {
         transaction.category.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((transaction) => 
-      !selectedCategory || transaction.category === selectedCategory
+      selectedCategory === "all" || transaction.category === selectedCategory
     )
     .filter((transaction) => {
       if (!startDate || !endDate) return true;
@@ -174,7 +173,7 @@ const Index = () => {
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
