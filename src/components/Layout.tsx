@@ -2,12 +2,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, User, Settings, PieChart, Menu, X } from "lucide-react";
+import { Home, User, Settings, PieChart, Menu, X, Moon, Sun } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
@@ -40,8 +42,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
       >
         <div className="h-full px-3 py-4 flex flex-col">
-          <div className="mb-4 px-3">
+          <div className="mb-4 px-3 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Finance App</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
           </div>
           <nav className="space-y-1 flex-1">
             {navigation.map((item) => (
