@@ -1,48 +1,150 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Camera, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+1 234 567 8900",
-    memberSince: "March 2024"
+    name: "",
+    email: "",
+    phone: "",
+    dob: "",
+    member_since: "",
+    avatar_url: "",
   });
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [session, setSession] = useState<any>(null);
+  const navigate = useNavigate();
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+      setSession(session);
+      fetchProfile(session.user.id);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+      setSession(session);
+      fetchProfile(session.user.id);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setProfileData({
+          name: data.name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          dob: data.dob || "",
+          member_since: new Date(data.member_since).toLocaleDateString(),
+          avatar_url: data.avatar_url || "",
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would typically save the changes to a backend
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !session) return;
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${session.user.id}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      setProfileData((prev) => ({ ...prev, avatar_url: publicUrl }));
+    } catch (error: any) {
+      toast.error("Error uploading image");
+    }
   };
+
+  const handleSave = async () => {
+    if (!session) return;
+    
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          name: profileData.name,
+          email: profileData.email,
+          phone: profileData.phone,
+          dob: profileData.dob,
+          avatar_url: profileData.avatar_url,
+        })
+        .eq("id", session.user.id);
+
+      if (error) throw error;
+      toast.success("Profile updated successfully");
+      setIsEditing(false);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Profile</h1>
-          <Button 
-            variant={isEditing ? "default" : "outline"}
-            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          >
-            {isEditing ? "Save Changes" : "Edit Profile"}
-          </Button>
+          <div className="space-x-2">
+            <Button 
+              variant={isEditing ? "default" : "outline"}
+              onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            >
+              {isEditing ? "Save Changes" : "Edit Profile"}
+            </Button>
+            <Button variant="destructive" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         <Card className="p-6">
@@ -51,9 +153,9 @@ const Profile = () => {
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                  {imageUrl ? (
+                  {profileData.avatar_url ? (
                     <img 
-                      src={imageUrl} 
+                      src={profileData.avatar_url} 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
@@ -90,7 +192,7 @@ const Profile = () => {
                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                   />
                 ) : (
-                  <p className="text-lg mt-1">{profileData.name}</p>
+                  <p className="text-lg mt-1">{profileData.name || "Not set"}</p>
                 )}
               </div>
 
@@ -118,13 +220,27 @@ const Profile = () => {
                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
                   />
                 ) : (
-                  <p className="text-lg mt-1">{profileData.phone}</p>
+                  <p className="text-lg mt-1">{profileData.phone || "Not set"}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="dob">Date of Birth</Label>
+                {isEditing ? (
+                  <Input
+                    id="dob"
+                    type="date"
+                    value={profileData.dob}
+                    onChange={(e) => setProfileData({ ...profileData, dob: e.target.value })}
+                  />
+                ) : (
+                  <p className="text-lg mt-1">{profileData.dob ? new Date(profileData.dob).toLocaleDateString() : "Not set"}</p>
                 )}
               </div>
 
               <div>
                 <Label>Member Since</Label>
-                <p className="text-lg mt-1">{profileData.memberSince}</p>
+                <p className="text-lg mt-1">{profileData.member_since}</p>
               </div>
             </div>
           </div>
