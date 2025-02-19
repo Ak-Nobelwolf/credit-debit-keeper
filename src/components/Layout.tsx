@@ -20,22 +20,29 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen flex relative">
-      {/* Mobile menu button - moved to left corner with padding */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="lg:hidden fixed top-2 left-2 z-50"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? (
+      {/* Mobile menu button - positioned on right when menu is closed, inside sidebar when open */}
+      {isSidebarOpen ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden absolute top-4 right-4 z-50"
+          onClick={() => setIsSidebarOpen(false)}
+        >
           <X className="h-4 w-4" />
-        ) : (
+        </Button>
+      ) : (
+        <Button
+          variant="outline"
+          size="icon"
+          className="lg:hidden fixed top-4 right-4 z-50"
+          onClick={() => setIsSidebarOpen(true)}
+        >
           <Menu className="h-4 w-4" />
-        )}
-      </Button>
+        </Button>
+      )}
 
-      {/* Main content wrapper with padding to avoid overlap */}
-      <div className="flex-1 lg:pl-0 pl-12">
+      {/* Main content wrapper */}
+      <div className="flex-1">
         {/* Sidebar */}
         <div
           className={cn(
@@ -79,7 +86,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
 
-        <div className="min-h-screen">
+        <div className="min-h-screen pt-16 lg:pt-0">
           {children}
         </div>
       </div>
