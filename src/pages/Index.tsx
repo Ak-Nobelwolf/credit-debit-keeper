@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { TransactionCard } from "@/components/TransactionCard";
@@ -32,7 +33,6 @@ interface Transaction {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 const Index = () => {
-  const { theme, setTheme } = useTheme();
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: 1,
