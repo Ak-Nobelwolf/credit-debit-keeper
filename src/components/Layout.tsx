@@ -20,11 +20,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen flex relative">
-      {/* Mobile menu button */}
+      {/* Mobile menu button - moved to left corner with padding */}
       <Button
         variant="outline"
         size="icon"
-        className="lg:hidden fixed top-4 left-4 z-50"
+        className="lg:hidden fixed top-2 left-2 z-50"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? (
@@ -34,51 +34,51 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
       </Button>
 
-      {/* Sidebar */}
-      <div
-        className={cn(
-          "w-64 bg-card border-r border-border fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-200 ease-in-out",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        )}
-      >
-        <div className="h-full px-3 py-4 flex flex-col">
-          <div className="mb-4 px-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Finance App</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-          <nav className="space-y-1 flex-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setIsSidebarOpen(false)}
-                className={cn(
-                  "flex items-center px-3 py-2 text-sm font-medium rounded-md",
-                  location.pathname === item.href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
+      {/* Main content wrapper with padding to avoid overlap */}
+      <div className="flex-1 lg:pl-0 pl-12">
+        {/* Sidebar */}
+        <div
+          className={cn(
+            "w-64 bg-card border-r border-border fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-200 ease-in-out",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          )}
+        >
+          <div className="h-full px-3 py-4 flex flex-col">
+            <div className="mb-4 px-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Finance App</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               >
-                <item.icon className="mr-3 h-4 w-4" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <nav className="space-y-1 flex-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+                    location.pathname === item.href
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  <item.icon className="mr-3 h-4 w-4" />
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
-      </div>
 
-      {/* Main content */}
-      <div className="flex-1 lg:pl-0 pl-0">
         <div className="min-h-screen">
           {children}
         </div>
