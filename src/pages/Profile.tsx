@@ -120,11 +120,6 @@ const Profile = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -132,27 +127,22 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
           <h1 className="text-2xl font-bold">Profile</h1>
-          <div className="space-x-2">
-            <Button 
-              variant={isEditing ? "default" : "outline"}
-              onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            >
-              {isEditing ? "Save Changes" : "Edit Profile"}
-            </Button>
-            <Button variant="destructive" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
+          <Button 
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          >
+            {isEditing ? "Save Changes" : "Edit Profile"}
+          </Button>
         </div>
 
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="space-y-6">
             {/* Profile Image */}
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
                   {profileData.avatar_url ? (
                     <img 
                       src={profileData.avatar_url} 
@@ -160,13 +150,13 @@ const Profile = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <User className="w-16 h-16 text-muted-foreground" />
+                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
                   )}
                 </div>
                 {isEditing && (
                   <label 
                     htmlFor="profile-image" 
-                    className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90"
+                    className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
                   >
                     <Camera className="w-4 h-4" />
                     <input
@@ -182,7 +172,7 @@ const Profile = () => {
             </div>
 
             {/* Profile Information */}
-            <div className="space-y-4">
+            <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <Label htmlFor="name">Name</Label>
                 {isEditing ? (
@@ -190,6 +180,7 @@ const Profile = () => {
                     id="name"
                     value={profileData.name}
                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                    className="mt-1"
                   />
                 ) : (
                   <p className="text-lg mt-1">{profileData.name || "Not set"}</p>
@@ -204,6 +195,7 @@ const Profile = () => {
                     type="email"
                     value={profileData.email}
                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                    className="mt-1"
                   />
                 ) : (
                   <p className="text-lg mt-1">{profileData.email}</p>
@@ -218,6 +210,7 @@ const Profile = () => {
                     type="tel"
                     value={profileData.phone}
                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    className="mt-1"
                   />
                 ) : (
                   <p className="text-lg mt-1">{profileData.phone || "Not set"}</p>
@@ -232,6 +225,7 @@ const Profile = () => {
                     type="date"
                     value={profileData.dob}
                     onChange={(e) => setProfileData({ ...profileData, dob: e.target.value })}
+                    className="mt-1"
                   />
                 ) : (
                   <p className="text-lg mt-1">{profileData.dob ? new Date(profileData.dob).toLocaleDateString() : "Not set"}</p>
