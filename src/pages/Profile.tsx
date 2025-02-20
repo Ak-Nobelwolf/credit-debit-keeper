@@ -1,13 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Camera, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ProfileImage } from "@/components/profile/ProfileImage";
+import { ProfileField } from "@/components/profile/ProfileField";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -120,6 +118,10 @@ const Profile = () => {
     }
   };
 
+  const handleFieldChange = (field: keyof typeof profileData) => (value: string) => {
+    setProfileData(prev => ({ ...prev, [field]: value }));
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -139,103 +141,51 @@ const Profile = () => {
 
         <Card className="p-4 sm:p-6">
           <div className="space-y-6">
-            {/* Profile Image */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="relative">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                  {profileData.avatar_url ? (
-                    <img 
-                      src={profileData.avatar_url} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground" />
-                  )}
-                </div>
-                {isEditing && (
-                  <label 
-                    htmlFor="profile-image" 
-                    className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <input
-                      id="profile-image"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                  </label>
-                )}
-              </div>
-            </div>
+            <ProfileImage
+              avatarUrl={profileData.avatar_url}
+              isEditing={isEditing}
+              onImageUpload={handleImageUpload}
+            />
 
-            {/* Profile Information */}
             <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                {isEditing ? (
-                  <Input
-                    id="name"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-lg mt-1">{profileData.name || "Not set"}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                {isEditing ? (
-                  <Input
-                    id="email"
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-lg mt-1">{profileData.email}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                {isEditing ? (
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-lg mt-1">{profileData.phone || "Not set"}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="dob">Date of Birth</Label>
-                {isEditing ? (
-                  <Input
-                    id="dob"
-                    type="date"
-                    value={profileData.dob}
-                    onChange={(e) => setProfileData({ ...profileData, dob: e.target.value })}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-lg mt-1">{profileData.dob ? new Date(profileData.dob).toLocaleDateString() : "Not set"}</p>
-                )}
-              </div>
-
-              <div>
-                <Label>Member Since</Label>
-                <p className="text-lg mt-1">{profileData.member_since}</p>
-              </div>
+              <ProfileField
+                label="Name"
+                id="name"
+                value={profileData.name}
+                isEditing={isEditing}
+                onChange={handleFieldChange("name")}
+              />
+              <ProfileField
+                label="Email"
+                id="email"
+                value={profileData.email}
+                type="email"
+                isEditing={isEditing}
+                onChange={handleFieldChange("email")}
+              />
+              <ProfileField
+                label="Phone Number"
+                id="phone"
+                value={profileData.phone}
+                type="tel"
+                isEditing={isEditing}
+                onChange={handleFieldChange("phone")}
+              />
+              <ProfileField
+                label="Date of Birth"
+                id="dob"
+                value={profileData.dob}
+                type="date"
+                isEditing={isEditing}
+                onChange={handleFieldChange("dob")}
+              />
+              <ProfileField
+                label="Member Since"
+                id="member_since"
+                value={profileData.member_since}
+                isEditing={isEditing}
+                readonly
+              />
             </div>
           </div>
         </Card>
