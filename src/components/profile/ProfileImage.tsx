@@ -9,7 +9,7 @@ interface ProfileImageProps {
 
 export const ProfileImage = ({ avatarUrl, isEditing, onImageUpload }: ProfileImageProps) => {
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-start space-y-4">
       <div className="relative">
         <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
           {avatarUrl ? (

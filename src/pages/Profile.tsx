@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -127,9 +128,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
+    <div className="bg-background p-4 sm:p-6 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold">Profile</h1>
           <Button 
             variant={isEditing ? "default" : "outline"}
@@ -139,53 +140,57 @@ const Profile = () => {
           </Button>
         </div>
 
-        <Card className="p-4 sm:p-6">
-          <div className="space-y-6">
-            <ProfileImage
-              avatarUrl={profileData.avatar_url}
-              isEditing={isEditing}
-              onImageUpload={handleImageUpload}
-            />
+        <Card className="p-4 sm:p-6 overflow-hidden">
+          <div className="space-y-6 sm:space-y-0 sm:flex sm:gap-8">
+            <div className="flex-shrink-0">
+              <ProfileImage
+                avatarUrl={profileData.avatar_url}
+                isEditing={isEditing}
+                onImageUpload={handleImageUpload}
+              />
+            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              <ProfileField
-                label="Name"
-                id="name"
-                value={profileData.name}
-                isEditing={isEditing}
-                onChange={handleFieldChange("name")}
-              />
-              <ProfileField
-                label="Email"
-                id="email"
-                value={profileData.email}
-                type="email"
-                isEditing={isEditing}
-                onChange={handleFieldChange("email")}
-              />
-              <ProfileField
-                label="Phone Number"
-                id="phone"
-                value={profileData.phone}
-                type="tel"
-                isEditing={isEditing}
-                onChange={handleFieldChange("phone")}
-              />
-              <ProfileField
-                label="Date of Birth"
-                id="dob"
-                value={profileData.dob}
-                type="date"
-                isEditing={isEditing}
-                onChange={handleFieldChange("dob")}
-              />
-              <ProfileField
-                label="Member Since"
-                id="member_since"
-                value={profileData.member_since}
-                isEditing={isEditing}
-                readonly
-              />
+            <div className="flex-grow">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ProfileField
+                  label="Name"
+                  id="name"
+                  value={profileData.name}
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("name")}
+                />
+                <ProfileField
+                  label="Email"
+                  id="email"
+                  value={profileData.email}
+                  type="email"
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("email")}
+                />
+                <ProfileField
+                  label="Phone Number"
+                  id="phone"
+                  value={profileData.phone}
+                  type="tel"
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("phone")}
+                />
+                <ProfileField
+                  label="Date of Birth"
+                  id="dob"
+                  value={profileData.dob}
+                  type="date"
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("dob")}
+                />
+                <ProfileField
+                  label="Member Since"
+                  id="member_since"
+                  value={profileData.member_since}
+                  isEditing={isEditing}
+                  readonly
+                />
+              </div>
             </div>
           </div>
         </Card>
