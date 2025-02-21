@@ -128,9 +128,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="bg-background p-4 sm:p-6 min-h-screen">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="bg-background p-3 sm:p-4 min-h-screen">
+      <div className="max-w-4xl mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h1 className="text-2xl font-bold">Profile</h1>
           <Button 
             variant={isEditing ? "default" : "outline"}
@@ -140,9 +140,9 @@ const Profile = () => {
           </Button>
         </div>
 
-        <Card className="p-4 sm:p-6 overflow-hidden">
-          <div className="space-y-6 sm:space-y-0 sm:flex sm:gap-8">
-            <div className="flex-shrink-0">
+        <Card className="p-3 sm:p-5 overflow-hidden">
+          <div className="sm:flex sm:gap-6">
+            <div className="flex-shrink-0 mb-4 sm:mb-0">
               <ProfileImage
                 avatarUrl={profileData.avatar_url}
                 isEditing={isEditing}
@@ -151,7 +151,7 @@ const Profile = () => {
             </div>
 
             <div className="flex-grow">
-              <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <ProfileField
                   label="Name"
                   id="name"
