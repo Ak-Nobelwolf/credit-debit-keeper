@@ -16,6 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const { session } = useAuth();
   const navigate = useNavigate();
 
+  // Navigation items based on authentication status
   const publicNavigation = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'About Us', href: '/about', icon: Info },
@@ -23,13 +24,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const privateNavigation = [
+    { name: 'Home', href: '/', icon: Home },
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Analytics', href: '/analytics', icon: PieChart },
     { name: 'Profile', href: '/profile', icon: User },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
-  const navigation = session ? [...publicNavigation, ...privateNavigation] : publicNavigation;
+  const navigation = session ? privateNavigation : publicNavigation;
 
   const handleLogout = async () => {
     try {

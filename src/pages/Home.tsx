@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
+import { TransactionCard } from "@/components/TransactionCard";
+import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 
 const Home = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -18,6 +20,24 @@ const Home = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { session } = useAuth();
+  const [transactions, setTransactions] = useState([
+    {
+      id: 1,
+      type: "credit" as const,
+      amount: 5000,
+      description: "Salary",
+      category: "Salary",
+      date: "2024-03-25",
+    },
+    {
+      id: 2,
+      type: "debit" as const,
+      amount: 50,
+      description: "Dinner",
+      category: "Food",
+      date: "2024-03-24",
+    },
+  ]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +66,40 @@ const Home = () => {
     }
   };
 
+  const addTransaction = (newTransaction: {
+    type: "credit" | "debit";
+    amount: number;
+    description: string;
+    category: string;
+  }) => {
+    setTransactions([
+      {
+        ...newTransaction,
+        id: transactions.length + 1,
+        date: new Date().toISOString().split("T")[0],
+      },
+      ...transactions,
+    ]);
+  };
+
+  // Show logged-in content if user is authenticated
+  if (session) {
+    return (
+      <div className="min-h-screen bg-background p-4 sm:p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h1 className="text-2xl font-bold">Recent Transactions</h1>
+          <div className="space-y-4">
+            {transactions.map((transaction) => (
+              <TransactionCard key={transaction.id} {...transaction} />
+            ))}
+          </div>
+          <AddTransactionDialog onAddTransaction={addTransaction} />
+        </div>
+      </div>
+    );
+  }
+
+  // Show login/signup form for non-authenticated users
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background with parallax effect */}
