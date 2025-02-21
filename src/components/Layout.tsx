@@ -2,7 +2,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, User, Settings, PieChart, Menu, X, Moon, Sun, LogOut, Phone, Info } from "lucide-react";
+import { Home, User, Settings, PieChart, Menu, X, Moon, Sun, LogOut, Phone, Info, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import { useAuth } from "./AuthProvider";
@@ -16,30 +16,30 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const { session } = useAuth();
   const navigate = useNavigate();
 
-  const navigation = [
-    { name: 'Home', href: '/', icon: Home, public: true },
-    { name: 'About Us', href: '/about', icon: Info, public: true },
-    { name: 'Contact', href: '/contact', icon: Phone, public: true },
-    { name: 'Dashboard', href: '/dashboard', icon: PieChart, public: false },
-    { name: 'Analytics', href: '/analytics', icon: PieChart, public: false },
-    { name: 'Profile', href: '/profile', icon: User, public: false },
-    { name: 'Settings', href: '/settings', icon: Settings, public: false },
+  const publicNavigation = [
+    { name: 'Home', href: '/', icon: Home },
+    { name: 'About Us', href: '/about', icon: Info },
+    { name: 'Contact', href: '/contact', icon: Phone },
   ];
+
+  const privateNavigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Analytics', href: '/analytics', icon: PieChart },
+    { name: 'Profile', href: '/profile', icon: User },
+    { name: 'Settings', href: '/settings', icon: Settings },
+  ];
+
+  const navigation = session ? [...publicNavigation, ...privateNavigation] : publicNavigation;
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
       toast.success("Logged out successfully");
-      navigate("/auth");
+      navigate("/");
     } catch (error: any) {
       toast.error("Error logging out");
     }
   };
-
-  // Filter navigation items based on authentication status
-  const filteredNavigation = navigation.filter(item => 
-    session ? true : item.public
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +78,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </Button>
             </div>
             <nav className="space-y-2 flex-1">
-              {filteredNavigation.map((item) => (
+              {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -94,7 +94,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   {item.name}
                 </Link>
               ))}
-              {session && (
+            </nav>
+            <div className="pt-2">
+              {session ? (
                 <Button
                   variant="ghost"
                   className="w-full justify-start px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -103,8 +105,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <LogOut className="mr-3 h-4 w-4" />
                   Logout
                 </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  className="w-full"
+                  onClick={() => navigate("/")}
+                >
+                  Sign In
+                </Button>
               )}
-            </nav>
+            </div>
           </div>
         </div>
 
@@ -112,7 +122,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex-1">
           <main className={cn(
             "min-h-screen",
-            session ? "pt-16 lg:pt-0" : "pt-16 lg:pt-0"
+            "pt-16 lg:pt-0"
           )}>
             {children}
           </main>
