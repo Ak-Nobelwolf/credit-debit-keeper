@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Server, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
 import { TransactionCard } from "@/components/TransactionCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
+import { cn } from "@/lib/utils";
 
 const Home = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -82,17 +82,54 @@ const Home = () => {
     ]);
   };
 
+  // Calculate totals
+  const totalIncome = transactions
+    .filter(t => t.type === "credit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpenses = transactions
+    .filter(t => t.type === "debit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance = totalIncome - totalExpenses;
+
   // Show logged-in content if user is authenticated
   if (session) {
     return (
       <div className="min-h-screen bg-background p-4 sm:p-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          <h1 className="text-2xl font-bold">Recent Transactions</h1>
-          <div className="space-y-4">
-            {transactions.map((transaction) => (
-              <TransactionCard key={transaction.id} {...transaction} />
-            ))}
+          {/* Summary Cards */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Total Income</h3>
+              <p className="text-2xl font-bold text-green-500">${totalIncome.toFixed(2)}</p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
+              <p className="text-2xl font-bold text-red-500">${totalExpenses.toFixed(2)}</p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Balance</h3>
+              <p className={cn(
+                "text-2xl font-bold",
+                balance >= 0 ? "text-green-500" : "text-red-500"
+              )}>
+                ${balance.toFixed(2)}
+              </p>
+            </Card>
           </div>
+
+          {/* Recent Transactions */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Recent Transactions</h2>
+            <div className="space-y-4">
+              {transactions.map((transaction) => (
+                <TransactionCard key={transaction.id} {...transaction} />
+              ))}
+            </div>
+          </div>
+
+          {/* Add Transaction Button */}
           <AddTransactionDialog onAddTransaction={addTransaction} />
         </div>
       </div>
