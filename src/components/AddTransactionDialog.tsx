@@ -57,11 +57,15 @@ export function AddTransactionDialog({ onAddTransaction }: AddTransactionProps) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg">
-          <Plus className="h-6 w-6" />
+        <Button 
+          size="lg" 
+          className="rounded-full w-auto px-4 py-2 h-10 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+        >
+          <Plus className="h-5 w-5" />
+          Add Expense
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] animate-slideIn">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Transaction</DialogTitle>
         </DialogHeader>

@@ -115,10 +115,7 @@ const Dashboard = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background -z-10" />
 
       <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
-        <motion.div 
-          className="space-y-6"
-          variants={itemVariants}
-        >
+        <motion.div className="space-y-6">
           <motion.div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <motion.h1 
               className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
@@ -129,7 +126,7 @@ const Dashboard = () => {
             <AddTransactionDialog onAddTransaction={addTransaction} />
           </motion.div>
 
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <motion.div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <motion.div variants={itemVariants}>
               <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
                 <div className="flex items-center justify-between mb-4">
@@ -194,18 +191,18 @@ const Dashboard = () => {
                 </p>
               </Card>
             </motion.div>
-          </div>
+          </motion.div>
 
           <motion.div 
             variants={itemVariants}
-            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-4 sm:p-6"
+            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-6"
           >
-            <h2 className="text-lg font-semibold mb-4">Filters & Sorting</h2>
-            <div className="flex flex-wrap gap-4">
-              <div className="space-y-2 min-w-[150px]">
-                <Label>Sort By</Label>
+            <h2 className="text-lg font-semibold mb-6">Filters & Sorting</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Sort By</Label>
                 <Select value={sortBy} onValueChange={(value: "date" | "amount" | "category") => setSortBy(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -215,21 +212,21 @@ const Dashboard = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2 min-w-[150px]">
-                <Label>Order</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Order</Label>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full justify-between"
                   onClick={() => setSortOrder(current => current === "asc" ? "desc" : "asc")}
                 >
                   {sortOrder === "asc" ? "Ascending" : "Descending"}
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  <ArrowUpDown className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="space-y-2 min-w-[150px]">
-                <Label>Category</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Category</Label>
                 <Select value={filterCategory} onValueChange={setFilterCategory}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Filter category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -242,10 +239,10 @@ const Dashboard = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2 min-w-[150px]">
-                <Label>Type</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Type</Label>
                 <Select value={filterType} onValueChange={(value: "all" | "credit" | "debit") => setFilterType(value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Filter type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -260,7 +257,7 @@ const Dashboard = () => {
 
           <motion.div 
             variants={itemVariants}
-            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-4 sm:p-6"
+            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-6"
           >
             <h2 className="text-2xl font-bold mb-6">Recent Transactions</h2>
             <div className="space-y-4">
