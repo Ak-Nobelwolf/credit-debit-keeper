@@ -1,17 +1,14 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Code, Server, Shield } from "lucide-react";
+import { Code, Server, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
-import { TransactionCard } from "@/components/TransactionCard";
-import { AddTransactionDialog } from "@/components/AddTransactionDialog";
-import { cn } from "@/lib/utils";
 
 const Home = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -20,24 +17,12 @@ const Home = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { session } = useAuth();
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: "credit" as const,
-      amount: 5000,
-      description: "Salary",
-      category: "Salary",
-      date: "2024-03-25",
-    },
-    {
-      id: 2,
-      type: "debit" as const,
-      amount: 50,
-      description: "Dinner",
-      category: "Food",
-      date: "2024-03-24",
-    },
-  ]);
+
+  useEffect(() => {
+    if (session) {
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,87 +51,16 @@ const Home = () => {
     }
   };
 
-  const addTransaction = (newTransaction: {
-    type: "credit" | "debit";
-    amount: number;
-    description: string;
-    category: string;
-  }) => {
-    setTransactions([
-      {
-        ...newTransaction,
-        id: transactions.length + 1,
-        date: new Date().toISOString().split("T")[0],
-      },
-      ...transactions,
-    ]);
-  };
+  if (session) return null;
 
-  // Calculate totals
-  const totalIncome = transactions
-    .filter(t => t.type === "credit")
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpenses = transactions
-    .filter(t => t.type === "debit")
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const balance = totalIncome - totalExpenses;
-
-  // Show logged-in content if user is authenticated
-  if (session) {
-    return (
-      <div className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Summary Cards */}
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Total Income</h3>
-              <p className="text-2xl font-bold text-green-500">${totalIncome.toFixed(2)}</p>
-            </Card>
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
-              <p className="text-2xl font-bold text-red-500">${totalExpenses.toFixed(2)}</p>
-            </Card>
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Balance</h3>
-              <p className={cn(
-                "text-2xl font-bold",
-                balance >= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                ${balance.toFixed(2)}
-              </p>
-            </Card>
-          </div>
-
-          {/* Recent Transactions */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Recent Transactions</h2>
-            <div className="space-y-4">
-              {transactions.map((transaction) => (
-                <TransactionCard key={transaction.id} {...transaction} />
-              ))}
-            </div>
-          </div>
-
-          {/* Add Transaction Button */}
-          <AddTransactionDialog onAddTransaction={addTransaction} />
-        </div>
-      </div>
-    );
-  }
-
-  // Show login/signup form for non-authenticated users
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background with parallax effect */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 animate-gradient" />
         <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-blob" />
         <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
       </div>
 
-      {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -211,7 +125,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 px-4 bg-muted/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>

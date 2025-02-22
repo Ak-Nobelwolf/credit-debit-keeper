@@ -1,4 +1,3 @@
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const privateNavigation = [
-    { name: 'Home', href: '/', icon: Home },
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Analytics', href: '/analytics', icon: PieChart },
     { name: 'Profile', href: '/profile', icon: User },
