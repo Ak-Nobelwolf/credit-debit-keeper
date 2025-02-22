@@ -1,11 +1,13 @@
-
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, DollarSign, TrendingUp } from "lucide-react";
+import { ArrowUp, ArrowDown, DollarSign, TrendingUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 import { TransactionCard } from "@/components/TransactionCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const [transactions, setTransactions] = useState([
@@ -26,6 +28,13 @@ const Dashboard = () => {
       date: "2024-03-24",
     },
   ]);
+
+  const [sortBy, setSortBy] = useState<"date" | "amount" | "category">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterType, setFilterType] = useState<"all" | "credit" | "debit">("all");
+
+  const categories = Array.from(new Set(transactions.map(t => t.category)));
 
   const addTransaction = (newTransaction: {
     type: "credit" | "debit";
@@ -53,6 +62,29 @@ const Dashboard = () => {
     .reduce((sum, t) => sum + t.amount, 0);
 
   const balance = totalIncome - totalExpenses;
+
+  // Filter and sort transactions
+  const filteredAndSortedTransactions = [...transactions]
+    .filter(t => {
+      if (filterCategory !== "all" && t.category !== filterCategory) return false;
+      if (filterType !== "all" && t.type !== filterType) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+      switch (sortBy) {
+        case "date":
+          comparison = new Date(b.date).getTime() - new Date(a.date).getTime();
+          break;
+        case "amount":
+          comparison = b.amount - a.amount;
+          break;
+        case "category":
+          comparison = a.category.localeCompare(b.category);
+          break;
+      }
+      return sortOrder === "asc" ? -comparison : comparison;
+    });
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
@@ -132,11 +164,68 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
+        {/* Filters and Sort */}
+        <div className="flex flex-wrap gap-4">
+          <div className="space-y-2">
+            <Label>Sort By</Label>
+            <Select value={sortBy} onValueChange={(value: "date" | "amount" | "category") => setSortBy(value)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date</SelectItem>
+                <SelectItem value="amount">Amount</SelectItem>
+                <SelectItem value="category">Category</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Order</Label>
+            <Button
+              variant="outline"
+              className="w-[150px]"
+              onClick={() => setSortOrder(current => current === "asc" ? "desc" : "asc")}
+            >
+              {sortOrder === "asc" ? "Ascending" : "Descending"}
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <Label>Category</Label>
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Filter category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Type</Label>
+            <Select value={filterType} onValueChange={(value: "all" | "credit" | "debit") => setFilterType(value)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Filter type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="credit">Income</SelectItem>
+                <SelectItem value="debit">Expense</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         {/* Recent Transactions */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Recent Transactions</h2>
           <div className="space-y-4">
-            {transactions.map((transaction) => (
+            {filteredAndSortedTransactions.map((transaction) => (
               <TransactionCard key={transaction.id} {...transaction} />
             ))}
           </div>
