@@ -52,7 +52,6 @@ const Dashboard = () => {
     ]);
   };
 
-  // Calculate totals
   const totalIncome = transactions
     .filter(t => t.type === "credit")
     .reduce((sum, t) => sum + t.amount, 0);
@@ -63,7 +62,6 @@ const Dashboard = () => {
 
   const balance = totalIncome - totalExpenses;
 
-  // Filter and sort transactions
   const filteredAndSortedTransactions = [...transactions]
     .filter(t => {
       if (filterCategory !== "all" && t.category !== filterCategory) return false;
@@ -86,155 +84,206 @@ const Dashboard = () => {
       return sortOrder === "asc" ? -comparison : comparison;
     });
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <motion.h1 
-          className="text-2xl font-bold"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+    <motion.div 
+      className="min-h-screen bg-gradient-to-br from-background via-background to-background/95"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background -z-10" />
+
+      <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+        <motion.div 
+          className="space-y-6"
+          variants={itemVariants}
         >
-          Dashboard
-        </motion.h1>
-
-        {/* Summary Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <DollarSign className="h-8 w-8 text-primary" />
-                <span className={cn(
-                  "text-sm",
-                  balance >= 0 ? "text-green-500" : "text-red-500"
-                )}>{balance >= 0 ? "+" : "-"}${Math.abs(balance).toFixed(2)}</span>
-              </div>
-              <h3 className="font-medium text-muted-foreground">Total Balance</h3>
-              <p className="text-2xl font-bold">${Math.abs(balance).toFixed(2)}</p>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <ArrowUp className="h-8 w-8 text-primary" />
-                <span className="text-sm text-green-500">+${totalIncome.toFixed(2)}</span>
-              </div>
-              <h3 className="font-medium text-muted-foreground">Monthly Income</h3>
-              <p className="text-2xl font-bold">${totalIncome.toFixed(2)}</p>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <ArrowDown className="h-8 w-8 text-primary" />
-                <span className="text-sm text-red-500">-${totalExpenses.toFixed(2)}</span>
-              </div>
-              <h3 className="font-medium text-muted-foreground">Monthly Expenses</h3>
-              <p className="text-2xl font-bold">${totalExpenses.toFixed(2)}</p>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <TrendingUp className="h-8 w-8 text-primary" />
-                <span className="text-sm text-green-500">+8%</span>
-              </div>
-              <h3 className="font-medium text-muted-foreground">Savings Rate</h3>
-              <p className="text-2xl font-bold">{((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1)}%</p>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Filters and Sort */}
-        <div className="flex flex-wrap gap-4">
-          <div className="space-y-2">
-            <Label>Sort By</Label>
-            <Select value={sortBy} onValueChange={(value: "date" | "amount" | "category") => setSortBy(value)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="date">Date</SelectItem>
-                <SelectItem value="amount">Amount</SelectItem>
-                <SelectItem value="category">Category</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Order</Label>
-            <Button
-              variant="outline"
-              className="w-[150px]"
-              onClick={() => setSortOrder(current => current === "asc" ? "desc" : "asc")}
+          <motion.div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <motion.h1 
+              className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+              variants={itemVariants}
             >
-              {sortOrder === "asc" ? "Ascending" : "Descending"}
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <Label>Category</Label>
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Filter category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Type</Label>
-            <Select value={filterType} onValueChange={(value: "all" | "credit" | "debit") => setFilterType(value)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Filter type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="credit">Income</SelectItem>
-                <SelectItem value="debit">Expense</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+              Financial Dashboard
+            </motion.h1>
+            <AddTransactionDialog onAddTransaction={addTransaction} />
+          </motion.div>
 
-        {/* Recent Transactions */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Recent Transactions</h2>
-          <div className="space-y-4">
-            {filteredAndSortedTransactions.map((transaction) => (
-              <TransactionCard key={transaction.id} {...transaction} />
-            ))}
-          </div>
-        </div>
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <motion.div variants={itemVariants}>
+              <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <DollarSign className="h-6 w-6 text-primary" />
+                  </div>
+                  <span className={cn(
+                    "text-sm font-medium px-2.5 py-0.5 rounded-full",
+                    balance >= 0 ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                  )}>
+                    {balance >= 0 ? "+" : "-"}${Math.abs(balance).toFixed(2)}
+                  </span>
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Total Balance</h3>
+                <p className="text-2xl font-bold mt-1">${Math.abs(balance).toFixed(2)}</p>
+              </Card>
+            </motion.div>
 
-        {/* Add Transaction Button */}
-        <AddTransactionDialog onAddTransaction={addTransaction} />
+            <motion.div variants={itemVariants}>
+              <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <ArrowUp className="h-6 w-6 text-green-500" />
+                  </div>
+                  <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-500">
+                    +${totalIncome.toFixed(2)}
+                  </span>
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Monthly Income</h3>
+                <p className="text-2xl font-bold mt-1">${totalIncome.toFixed(2)}</p>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <ArrowDown className="h-6 w-6 text-red-500" />
+                  </div>
+                  <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-500">
+                    -${totalExpenses.toFixed(2)}
+                  </span>
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Monthly Expenses</h3>
+                <p className="text-2xl font-bold mt-1">${totalExpenses.toFixed(2)}</p>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500">
+                    {((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Savings Rate</h3>
+                <p className="text-2xl font-bold mt-1">
+                  {((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1)}%
+                </p>
+              </Card>
+            </motion.div>
+          </div>
+
+          <motion.div 
+            variants={itemVariants}
+            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-4 sm:p-6"
+          >
+            <h2 className="text-lg font-semibold mb-4">Filters & Sorting</h2>
+            <div className="flex flex-wrap gap-4">
+              <div className="space-y-2 min-w-[150px]">
+                <Label>Sort By</Label>
+                <Select value={sortBy} onValueChange={(value: "date" | "amount" | "category") => setSortBy(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date">Date</SelectItem>
+                    <SelectItem value="amount">Amount</SelectItem>
+                    <SelectItem value="category">Category</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 min-w-[150px]">
+                <Label>Order</Label>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setSortOrder(current => current === "asc" ? "desc" : "asc")}
+                >
+                  {sortOrder === "asc" ? "Ascending" : "Descending"}
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-2 min-w-[150px]">
+                <Label>Category</Label>
+                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 min-w-[150px]">
+                <Label>Type</Label>
+                <Select value={filterType} onValueChange={(value: "all" | "credit" | "debit") => setFilterType(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="credit">Income</SelectItem>
+                    <SelectItem value="debit">Expense</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-4 sm:p-6"
+          >
+            <h2 className="text-2xl font-bold mb-6">Recent Transactions</h2>
+            <div className="space-y-4">
+              {filteredAndSortedTransactions.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">
+                  No transactions found. Try adjusting your filters.
+                </p>
+              ) : (
+                filteredAndSortedTransactions.map((transaction) => (
+                  <motion.div
+                    key={transaction.id}
+                    variants={itemVariants}
+                    layout
+                  >
+                    <TransactionCard {...transaction} />
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
