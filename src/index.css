@@ -69,7 +69,7 @@
 
 /* Add consistent container padding for all screen sizes */
 .container-padding {
-  @apply px-2 sm:px-4 lg:px-6 py-4 sm:py-6;
+  @apply px-3 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6;
 }
 
 /* Add consistent card padding for all screen sizes */
@@ -79,7 +79,7 @@
 
 /* Add consistent spacing between sections */
 .section-spacing {
-  @apply space-y-4 sm:space-y-6;
+  @apply space-y-3 sm:space-y-4 lg:space-y-6;
 }
 
 /* Add consistent grid gaps */
@@ -87,3 +87,12 @@
   @apply gap-3 sm:gap-4 lg:gap-6;
 }
 
+/* Adjust page content spacing */
+.page-spacing {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+/* Adjust mobile header spacing */
+.mobile-header-spacing {
+  @apply pt-10 lg:pt-0;
+}

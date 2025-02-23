@@ -48,7 +48,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden fixed top-2 right-2 z-50"
+        className="lg:hidden fixed top-3 right-3 z-50"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -64,7 +64,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           )}
         >
           <div className="h-full px-3 py-4 flex flex-col">
-            <div className="mb-6 px-3 flex items-center justify-between">
+            <div className="mb-4 px-3 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Finance App</h2>
               <Button
                 variant="ghost"
@@ -123,7 +123,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex-1">
           <main className={cn(
             "min-h-screen",
-            "pt-12 lg:pt-0 px-2 sm:px-4 lg:px-6"
+            "pt-10 lg:pt-0", // Reduced top padding on mobile
+            "px-3 sm:px-4 lg:px-6" // Consistent horizontal padding
           )}>
             {children}
           </main>

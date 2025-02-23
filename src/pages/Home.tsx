@@ -61,9 +61,9 @@ const Home = () => {
         <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
       </div>
 
-      <section className="py-12 sm:py-16 lg:py-20 px-2 sm:px-4 lg:px-6">
+      <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
             <motion.div 
               className="text-center lg:text-left"
               initial={{ opacity: 0, y: 20 }}
@@ -125,7 +125,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 px-2 sm:px-4 lg:px-6 bg-muted/50">
+      <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-4 lg:px-6 bg-muted/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
