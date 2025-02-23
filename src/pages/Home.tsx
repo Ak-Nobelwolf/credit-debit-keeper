@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Code, Server, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,13 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
   const { session } = useAuth();
+
+  // Password validation states
+  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     if (session) {
@@ -24,25 +30,122 @@ const Home = () => {
     }
   }, [session, navigate]);
 
+  // Email validation
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  // Password validation
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setPasswordError("Password is required");
+      return false;
+    }
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return false;
+    }
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError("Password must contain at least one uppercase letter");
+      return false;
+    }
+    if (!/[a-z]/.test(password)) {
+      setPasswordError("Password must contain at least one lowercase letter");
+      return false;
+    }
+    if (!/[0-9]/.test(password)) {
+      setPasswordError("Password must contain at least one number");
+      return false;
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+      setPasswordError("Password must contain at least one special character (!@#$%^&*)");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Reset error states
+    setEmailError("");
+    setPasswordError("");
+
+    // Validate email and password
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Additional validation for signup
+    if (isSignUp) {
+      if (password !== confirmPassword) {
+        setPasswordError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+    }
+
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // First check if user exists
+        const { data: existingUser } = await supabase.auth.signInWithPassword({
+          email,
+          password: "dummy-password-for-check",
+        });
+
+        if (existingUser.user) {
+          toast.error("An account with this email already exists. Please login instead.");
+          setIsLoading(false);
+          return;
+        }
+
+        // Proceed with signup if user doesn't exist
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
         });
-        if (error) throw error;
-        toast.success("Sign up successful! Please check your email to verify your account.");
+        
+        if (signUpError) {
+          if (signUpError.message.includes("already registered")) {
+            toast.error("An account with this email already exists. Please login instead.");
+          } else {
+            toast.error(signUpError.message);
+          }
+        } else {
+          toast.success("Sign up successful! Please check your email to verify your account.");
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        // Login flow
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
-        navigate("/dashboard");
+        
+        if (signInError) {
+          if (signInError.message.includes("Invalid login credentials")) {
+            toast.error("Invalid email or password");
+          } else {
+            toast.error(signInError.message);
+          }
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -93,9 +196,16 @@ const Home = () => {
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        validateEmail(e.target.value);
+                      }}
                       required
+                      className={emailError ? "border-destructive" : ""}
                     />
+                    {emailError && (
+                      <p className="text-sm text-destructive mt-1">{emailError}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>
@@ -103,10 +213,47 @@ const Home = () => {
                       id="password"
                       type="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (isSignUp) {
+                          validatePassword(e.target.value);
+                        }
+                      }}
                       required
+                      className={passwordError ? "border-destructive" : ""}
                     />
+                    {passwordError && (
+                      <p className="text-sm text-destructive mt-1">{passwordError}</p>
+                    )}
                   </div>
+                  {isSignUp && (
+                    <div>
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className={password !== confirmPassword ? "border-destructive" : ""}
+                      />
+                      {password !== confirmPassword && confirmPassword && (
+                        <p className="text-sm text-destructive mt-1">Passwords do not match</p>
+                      )}
+                    </div>
+                  )}
+                  {isSignUp && (
+                    <div className="text-sm text-muted-foreground">
+                      <p>Password must contain:</p>
+                      <ul className="list-disc list-inside space-y-1 mt-1">
+                        <li>At least 8 characters</li>
+                        <li>One uppercase letter</li>
+                        <li>One lowercase letter</li>
+                        <li>One number</li>
+                        <li>One special character (!@#$%^&*)</li>
+                      </ul>
+                    </div>
+                  )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Login"}
                   </Button>
@@ -114,7 +261,13 @@ const Home = () => {
                     type="button"
                     variant="link"
                     className="w-full"
-                    onClick={() => setIsSignUp(!isSignUp)}
+                    onClick={() => {
+                      setIsSignUp(!isSignUp);
+                      setPassword("");
+                      setConfirmPassword("");
+                      setEmailError("");
+                      setPasswordError("");
+                    }}
                   >
                     {isSignUp ? "Already have an account? Login" : "Need an account? Sign Up"}
                   </Button>
