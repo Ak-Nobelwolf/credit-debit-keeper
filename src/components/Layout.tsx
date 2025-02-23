@@ -1,3 +1,4 @@
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden fixed top-4 right-4 z-50"
+        className="lg:hidden fixed top-2 right-2 z-50"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -77,14 +78,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 )}
               </Button>
             </div>
-            <nav className="space-y-2 flex-1">
+            <nav className="space-y-1 flex-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsSidebarOpen(false)}
                   className={cn(
-                    "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                     location.pathname === item.href
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -99,7 +100,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               {session ? (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  className="w-full justify-start px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-3 h-4 w-4" />
@@ -122,7 +123,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex-1">
           <main className={cn(
             "min-h-screen",
-            "pt-16 lg:pt-0"
+            "pt-12 lg:pt-0 px-2 sm:px-4 lg:px-6"
           )}>
             {children}
           </main>

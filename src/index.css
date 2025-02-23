@@ -66,3 +66,24 @@
 .fade-in {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Add consistent container padding for all screen sizes */
+.container-padding {
+  @apply px-2 sm:px-4 lg:px-6 py-4 sm:py-6;
+}
+
+/* Add consistent card padding for all screen sizes */
+.card-padding {
+  @apply p-3 sm:p-4 lg:p-6;
+}
+
+/* Add consistent spacing between sections */
+.section-spacing {
+  @apply space-y-4 sm:space-y-6;
+}
+
+/* Add consistent grid gaps */
+.grid-spacing {
+  @apply gap-3 sm:gap-4 lg:gap-6;
+}
+
