@@ -1,10 +1,10 @@
-
 import { motion } from "framer-motion";
 import { Code, Server, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,10 +17,12 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
   const navigate = useNavigate();
   const { session } = useAuth();
 
-  // Password validation states
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
 
@@ -30,7 +32,6 @@ const Home = () => {
     }
   }, [session, navigate]);
 
-  // Email validation
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
@@ -45,7 +46,6 @@ const Home = () => {
     return true;
   };
 
-  // Password validation
   const validatePassword = (password: string) => {
     if (!password) {
       setPasswordError("Password is required");
@@ -79,11 +79,9 @@ const Home = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Reset error states
     setEmailError("");
     setPasswordError("");
 
-    // Validate email and password
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
 
@@ -92,7 +90,6 @@ const Home = () => {
       return;
     }
 
-    // Additional validation for signup
     if (isSignUp) {
       if (password !== confirmPassword) {
         setPasswordError("Passwords do not match");
@@ -103,7 +100,6 @@ const Home = () => {
 
     try {
       if (isSignUp) {
-        // First check if user exists
         const { data: existingUser } = await supabase.auth.signInWithPassword({
           email,
           password: "dummy-password-for-check",
@@ -115,12 +111,11 @@ const Home = () => {
           return;
         }
 
-        // Proceed with signup if user doesn't exist
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
         });
-        
+
         if (signUpError) {
           if (signUpError.message.includes("already registered")) {
             toast.error("An account with this email already exists. Please login instead.");
@@ -131,12 +126,11 @@ const Home = () => {
           toast.success("Sign up successful! Please check your email to verify your account.");
         }
       } else {
-        // Login flow
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        
+
         if (signInError) {
           if (signInError.message.includes("Invalid login credentials")) {
             toast.error("Invalid email or password");
@@ -151,6 +145,33 @@ const Home = () => {
       toast.error(error.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResetting(true);
+
+    if (!validateEmail(resetEmail)) {
+      setIsResetting(false);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Password reset instructions have been sent to your email");
+        setShowResetDialog(false);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -254,6 +275,16 @@ const Home = () => {
                       </ul>
                     </div>
                   )}
+                  {!isSignUp && (
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="w-full text-sm text-muted-foreground"
+                      onClick={() => setShowResetDialog(true)}
+                    >
+                      Forgot your password?
+                    </Button>
+                  )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Login"}
                   </Button>
@@ -315,6 +346,39 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you instructions to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div>
+              <Label htmlFor="resetEmail">Email</Label>
+              <Input
+                id="resetEmail"
+                type="email"
+                value={resetEmail}
+                onChange={(e) => {
+                  setResetEmail(e.target.value);
+                  validateEmail(e.target.value);
+                }}
+                required
+                className={emailError ? "border-destructive" : ""}
+              />
+              {emailError && (
+                <p className="text-sm text-destructive mt-1">{emailError}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-full" disabled={isResetting}>
+              {isResetting ? "Sending..." : "Send Reset Instructions"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
