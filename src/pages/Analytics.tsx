@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 interface Transaction {
   id: number;
@@ -15,6 +16,7 @@ interface Transaction {
 }
 
 const Analytics = () => {
+  const { formatCurrency } = useLocalization();
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: 1,
@@ -94,6 +96,19 @@ const Analytics = () => {
   const netSavings = totalIncome - totalExpenses;
   const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) * 100 : 0;
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <Card className="p-3 bg-background border">
+          <p className="font-medium">{label}</p>
+          <p className="text-sm text-green-500">Income: {formatCurrency(payload[0].value)}</p>
+          <p className="text-sm text-red-500">Expenses: {formatCurrency(payload[1].value)}</p>
+        </Card>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -136,16 +151,16 @@ const Analytics = () => {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="p-4">
             <h3 className="text-sm font-medium text-muted-foreground">Total Income</h3>
-            <p className="text-2xl font-bold text-green-500">${totalIncome.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-green-500">{formatCurrency(totalIncome)}</p>
           </Card>
           <Card className="p-4">
             <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
-            <p className="text-2xl font-bold text-red-500">${totalExpenses.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpenses)}</p>
           </Card>
           <Card className="p-4">
             <h3 className="text-sm font-medium text-muted-foreground">Net Savings</h3>
             <p className={`text-2xl font-bold ${netSavings >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              ${netSavings.toFixed(2)}
+              {formatCurrency(netSavings)}
             </p>
           </Card>
           <Card className="p-4">
@@ -162,8 +177,8 @@ const Analytics = () => {
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
+                <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="income" fill="#22c55e" name="Income" />
                 <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
               </BarChart>

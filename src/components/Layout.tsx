@@ -1,3 +1,4 @@
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           >
             <div className="h-full px-3 py-4 flex flex-col">
               <div className="mb-4 px-3 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Finance App</h2>
+                <Link to="/" className="text-xl font-semibold">Finance App</Link>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -108,13 +109,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     Logout
                   </Button>
                 ) : (
-                  <Button
-                    variant="default"
-                    className="w-full"
-                    onClick={() => navigate("/")}
-                  >
-                    Sign In
-                  </Button>
+                  <Link to="/">
+                    <Button variant="default" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>
