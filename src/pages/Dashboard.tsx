@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, DollarSign, TrendingUp, ArrowUpDown } from "lucide-react";
@@ -8,8 +9,10 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 const Dashboard = () => {
+  const { formatCurrency } = useLocalization();
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -137,11 +140,11 @@ const Dashboard = () => {
                     "text-sm font-medium px-2.5 py-0.5 rounded-full",
                     balance >= 0 ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
                   )}>
-                    {balance >= 0 ? "+" : "-"}${Math.abs(balance).toFixed(2)}
+                    {balance >= 0 ? "+" : "-"}{formatCurrency(Math.abs(balance))}
                   </span>
                 </div>
                 <h3 className="text-sm font-medium text-muted-foreground">Total Balance</h3>
-                <p className="text-2xl font-bold mt-1">${Math.abs(balance).toFixed(2)}</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(Math.abs(balance))}</p>
               </Card>
             </motion.div>
 
@@ -152,11 +155,11 @@ const Dashboard = () => {
                     <ArrowUp className="h-6 w-6 text-green-500" />
                   </div>
                   <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-500">
-                    +${totalIncome.toFixed(2)}
+                    +{formatCurrency(totalIncome)}
                   </span>
                 </div>
                 <h3 className="text-sm font-medium text-muted-foreground">Monthly Income</h3>
-                <p className="text-2xl font-bold mt-1">${totalIncome.toFixed(2)}</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(totalIncome)}</p>
               </Card>
             </motion.div>
 
@@ -167,11 +170,11 @@ const Dashboard = () => {
                     <ArrowDown className="h-6 w-6 text-red-500" />
                   </div>
                   <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-500">
-                    -${totalExpenses.toFixed(2)}
+                    -{formatCurrency(totalExpenses)}
                   </span>
                 </div>
                 <h3 className="text-sm font-medium text-muted-foreground">Monthly Expenses</h3>
-                <p className="text-2xl font-bold mt-1">${totalExpenses.toFixed(2)}</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(totalExpenses)}</p>
               </Card>
             </motion.div>
 

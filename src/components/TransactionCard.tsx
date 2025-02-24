@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Card } from "./ui/card";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 interface TransactionCardProps {
   type: "credit" | "debit";
@@ -12,6 +13,8 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ type, amount, description, category, date }: TransactionCardProps) {
+  const { formatCurrency } = useLocalization();
+  
   return (
     <Card className="p-4 hover:shadow-md transition-shadow animate-fadeIn">
       <div className="flex items-center justify-between">
@@ -23,9 +26,9 @@ export function TransactionCard({ type, amount, description, category, date }: T
             )}
           >
             {type === "credit" ? (
-              <ArrowUpRight className="text-income w-5 h-5" />
+              <ArrowUpRight className="text-green-500 w-5 h-5" />
             ) : (
-              <ArrowDownRight className="text-expense w-5 h-5" />
+              <ArrowDownRight className="text-red-500 w-5 h-5" />
             )}
           </div>
           <div>
@@ -37,10 +40,10 @@ export function TransactionCard({ type, amount, description, category, date }: T
           <p
             className={cn(
               "font-semibold",
-              type === "credit" ? "text-income" : "text-expense"
+              type === "credit" ? "text-green-500" : "text-red-500"
             )}
           >
-            {type === "credit" ? "+" : "-"}${amount.toFixed(2)}
+            {type === "credit" ? "+" : "-"}{formatCurrency(amount)}
           </p>
           <p className="text-xs text-muted-foreground">{date}</p>
         </div>

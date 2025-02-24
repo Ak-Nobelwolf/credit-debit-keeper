@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
@@ -7,6 +6,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 interface AddTransactionProps {
   onAddTransaction: (transaction: {
@@ -18,6 +18,7 @@ interface AddTransactionProps {
 }
 
 export function AddTransactionDialog({ onAddTransaction }: AddTransactionProps) {
+  const { formatCurrency } = useLocalization();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"credit" | "debit">("debit");
   const [amount, setAmount] = useState("");
