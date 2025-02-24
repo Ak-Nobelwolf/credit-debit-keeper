@@ -1,0 +1,85 @@
+
+import { createContext, useContext, useState, ReactNode } from "react";
+
+interface Currency {
+  code: string;
+  symbol: string;
+  name: string;
+}
+
+interface Language {
+  code: string;
+  name: string;
+}
+
+interface LocalizationContextType {
+  currency: Currency;
+  setCurrency: (currency: Currency) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
+  formatCurrency: (amount: number) => string;
+  currencies: Currency[];
+  languages: Language[];
+}
+
+const currencies: Currency[] = [
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "JPY", symbol: "¥", name: "Japanese Yen" },
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "CNY", symbol: "¥", name: "Chinese Yuan" },
+  { code: "AUD", symbol: "A$", name: "Australian Dollar" },
+  { code: "CAD", symbol: "C$", name: "Canadian Dollar" },
+];
+
+const languages: Language[] = [
+  { code: "en", name: "English" },
+  { code: "es", name: "Español" },
+  { code: "fr", name: "Français" },
+  { code: "de", name: "Deutsch" },
+  { code: "it", name: "Italiano" },
+  { code: "ja", name: "日本語" },
+  { code: "zh", name: "中文" },
+  { code: "hi", name: "हिन्दी" },
+];
+
+const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);
+
+export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
+  const [currency, setCurrency] = useState<Currency>(currencies[0]);
+  const [language, setLanguage] = useState<Language>(languages[0]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(language.code, {
+      style: "currency",
+      currency: currency.code,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  return (
+    <LocalizationContext.Provider
+      value={{
+        currency,
+        setCurrency,
+        language,
+        setLanguage,
+        formatCurrency,
+        currencies,
+        languages,
+      }}
+    >
+      {children}
+    </LocalizationContext.Provider>
+  );
+};
+
+export const useLocalization = () => {
+  const context = useContext(LocalizationContext);
+  if (context === undefined) {
+    throw new Error("useLocalization must be used within a LocalizationProvider");
+  }
+  return context;
+};
