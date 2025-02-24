@@ -8,7 +8,6 @@ import { useTheme } from "next-themes";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LocalizationSelect } from "./layout/LocalizationSelect";
 import { LocalizationProvider } from "@/contexts/LocalizationContext";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -65,19 +64,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="h-full px-3 py-4 flex flex-col">
               <div className="mb-4 px-3 flex items-center justify-between">
                 <Link to="/" className="text-xl font-semibold">Finance App</Link>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  >
-                    {theme === "dark" ? (
-                      <Sun className="h-4 w-4" />
-                    ) : (
-                      <Moon className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
               <nav className="space-y-1 flex-1">
                 {navigation.map((item) => (
@@ -97,8 +94,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </Link>
                 ))}
               </nav>
-              <div className="pt-2 space-y-2">
-                <LocalizationSelect />
+              <div className="pt-2">
                 {session ? (
                   <Button
                     variant="ghost"
@@ -109,7 +105,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     Logout
                   </Button>
                 ) : (
-                  <Link to="/">
+                  <Link to="/" className="w-full block">
                     <Button variant="default" className="w-full">
                       Sign In
                     </Button>

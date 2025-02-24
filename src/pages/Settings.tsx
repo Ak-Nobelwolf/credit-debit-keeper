@@ -12,6 +12,7 @@ import {
 import { useTheme } from "next-themes";
 import { useLocalization } from "@/contexts/LocalizationContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { toast } from "sonner";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -23,6 +24,22 @@ const Settings = () => {
     currencies, 
     languages 
   } = useLocalization();
+
+  const handleLanguageChange = (code: string) => {
+    const newLanguage = languages.find(lang => lang.code === code);
+    if (newLanguage) {
+      setLanguage(newLanguage);
+      toast.success(`Language changed to ${newLanguage.name}`);
+    }
+  };
+
+  const handleCurrencyChange = (code: string) => {
+    const newCurrency = currencies.find(curr => curr.code === code);
+    if (newCurrency) {
+      setCurrency(newCurrency);
+      toast.success(`Currency changed to ${newCurrency.name}`);
+    }
+  };
 
   return (
     <ErrorBoundary>
@@ -52,10 +69,7 @@ const Settings = () => {
                     Choose your preferred language
                   </p>
                 </div>
-                <Select value={language.code} onValueChange={(code) => {
-                  const newLanguage = languages.find(lang => lang.code === code);
-                  if (newLanguage) setLanguage(newLanguage);
-                }}>
+                <Select value={language.code} onValueChange={handleLanguageChange}>
                   <SelectTrigger className="w-full sm:w-[240px]">
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
@@ -76,10 +90,7 @@ const Settings = () => {
                     Choose your preferred currency
                   </p>
                 </div>
-                <Select value={currency.code} onValueChange={(code) => {
-                  const newCurrency = currencies.find(curr => curr.code === code);
-                  if (newCurrency) setCurrency(newCurrency);
-                }}>
+                <Select value={currency.code} onValueChange={handleCurrencyChange}>
                   <SelectTrigger className="w-full sm:w-[240px]">
                     <SelectValue placeholder="Select currency" />
                   </SelectTrigger>

@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface Currency {
   code: string;
@@ -47,8 +47,38 @@ const languages: Language[] = [
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
-  const [currency, setCurrency] = useState<Currency>(currencies[0]);
-  const [language, setLanguage] = useState<Language>(languages[0]);
+  const [currency, setCurrency] = useState<Currency>(() => {
+    const saved = localStorage.getItem('preferredCurrency');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return currencies[0];
+      }
+    }
+    return currencies[0];
+  });
+
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem('preferredLanguage');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return languages[0];
+      }
+    }
+    return languages[0];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('preferredCurrency', JSON.stringify(currency));
+  }, [currency]);
+
+  useEffect(() => {
+    localStorage.setItem('preferredLanguage', JSON.stringify(language));
+    document.documentElement.lang = language.code;
+  }, [language]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat(language.code, {
