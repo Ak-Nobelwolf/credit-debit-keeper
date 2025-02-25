@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { AuthForm } from "@/components/auth/AuthForm";
+import AuthForm from "@/components/auth/AuthForm"; // Changed to default import
 import { ResetPasswordDialog } from "@/components/auth/ResetPasswordDialog";
 import { Features } from "@/components/auth/Features";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -51,11 +51,7 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <AuthForm 
-                  isSignUp={isSignUp}
-                  setIsSignUp={setIsSignUp}
-                  setShowResetDialog={setShowResetDialog}
-                />
+                <AuthForm />
               </motion.div>
             </div>
           </div>
