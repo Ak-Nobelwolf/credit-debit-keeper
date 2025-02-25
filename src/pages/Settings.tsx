@@ -16,22 +16,7 @@ import { toast } from "sonner";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
-  const { 
-    currency, 
-    setCurrency, 
-    language, 
-    setLanguage, 
-    currencies, 
-    languages 
-  } = useLocalization();
-
-  const handleLanguageChange = (code: string) => {
-    const newLanguage = languages.find(lang => lang.code === code);
-    if (newLanguage) {
-      setLanguage(newLanguage);
-      toast.success(`Language changed to ${newLanguage.name}`);
-    }
-  };
+  const { currency, setCurrency, currencies } = useLocalization();
 
   const handleCurrencyChange = (code: string) => {
     const newCurrency = currencies.find(curr => curr.code === code);
@@ -64,27 +49,6 @@ const Settings = () => {
 
               <div className="space-y-3">
                 <div className="space-y-0.5">
-                  <Label>Language</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Choose your preferred language
-                  </p>
-                </div>
-                <Select value={language.code} onValueChange={handleLanguageChange}>
-                  <SelectTrigger className="w-full sm:w-[240px]">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {languages.map((lang) => (
-                      <SelectItem key={lang.code} value={lang.code}>
-                        {lang.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-3">
-                <div className="space-y-0.5">
                   <Label>Currency</Label>
                   <p className="text-sm text-muted-foreground">
                     Choose your preferred currency
@@ -95,11 +59,17 @@ const Settings = () => {
                     <SelectValue placeholder="Select currency" />
                   </SelectTrigger>
                   <SelectContent>
-                    {currencies.map((curr) => (
-                      <SelectItem key={curr.code} value={curr.code}>
-                        {curr.symbol} {curr.name}
-                      </SelectItem>
-                    ))}
+                    {currencies.map((curr) => {
+                      const Icon = curr.icon;
+                      return (
+                        <SelectItem key={curr.code} value={curr.code}>
+                          <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4" />
+                            <span>{curr.name}</span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
