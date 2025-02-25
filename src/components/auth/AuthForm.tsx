@@ -9,11 +9,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Features } from "./Features";
 
-const AuthForm = () => {
+interface AuthFormProps {
+  isSignUp: boolean;
+  setIsSignUp: (value: boolean) => void;
+  setShowResetDialog: (value: boolean) => void;
+}
+
+const AuthForm = ({ isSignUp, setIsSignUp, setShowResetDialog }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,14 +26,19 @@ const AuthForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast.error(error.message);
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Check your email to confirm your account");
       } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
         toast.success("Logged in successfully");
         navigate("/dashboard");
       }
@@ -42,9 +52,12 @@ const AuthForm = () => {
   return (
     <div className="mx-auto max-w-sm space-y-8">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Welcome back</h1>
+        <h1 className="text-3xl font-bold">{isSignUp ? "Create Account" : "Welcome Back"}</h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Enter your credentials to access your account
+          {isSignUp 
+            ? "Enter your details to create your account" 
+            : "Enter your credentials to access your account"
+          }
         </p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -74,23 +87,27 @@ const AuthForm = () => {
           type="submit"
           disabled={loading}
         >
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? (isSignUp ? "Creating account..." : "Signing in...") : (isSignUp ? "Create Account" : "Sign In")}
         </Button>
       </form>
-      <div className="text-center">
+      <div className="text-center space-y-2">
         <Button
           variant="link"
           className="text-sm text-muted-foreground"
-          onClick={() => setIsResetDialogOpen(true)}
+          onClick={() => setShowResetDialog(true)}
         >
           Forgot your password?
         </Button>
+        <div>
+          <Button
+            variant="link"
+            className="text-sm"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
+          </Button>
+        </div>
       </div>
-      <Features />
-      <ResetPasswordDialog
-        open={isResetDialogOpen}
-        onOpenChange={setIsResetDialogOpen}
-      />
     </div>
   );
 };
