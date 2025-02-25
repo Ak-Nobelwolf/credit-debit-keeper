@@ -7,6 +7,7 @@ import AuthForm from "@/components/auth/AuthForm";
 import { ResetPasswordDialog } from "@/components/auth/ResetPasswordDialog";
 import { Features } from "@/components/auth/Features";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { FloatingShape } from "@/components/ui/3d/FloatingShape";
 
 const Home = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -22,6 +23,7 @@ const Home = () => {
   return (
     <ErrorBoundary>
       <div className="min-h-screen relative overflow-hidden">
+        <FloatingShape />
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 animate-gradient" />
           <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-blob" />
@@ -51,6 +53,7 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="bg-card/50 backdrop-blur-sm p-6 rounded-lg shadow-lg"
+                whileHover={{ scale: 1.02 }}
               >
                 <AuthForm 
                   isSignUp={isSignUp}
