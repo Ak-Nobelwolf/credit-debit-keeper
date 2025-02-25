@@ -57,13 +57,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex h-full">
           <div
             className={cn(
-              "w-64 bg-card border-r border-border fixed lg:sticky top-0 h-screen transition-transform duration-200 ease-in-out z-40",
+              "w-64 bg-card/95 backdrop-blur-sm border-r border-border fixed lg:sticky top-0 h-screen transition-transform duration-200 ease-in-out z-40",
               isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
             )}
           >
             <div className="h-full px-3 py-4 flex flex-col">
               <div className="mb-4 px-3 flex items-center justify-between">
-                <Link to="/" className="text-xl font-semibold">Finance App</Link>
+                <Link to="/" className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                  Finance App
+                </Link>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -76,17 +78,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   )}
                 </Button>
               </div>
-              <nav className="space-y-1 flex-1">
+              <nav className="space-y-1.5 flex-1">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setIsSidebarOpen(false)}
                     className={cn(
-                      "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                      "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                       location.pathname === item.href
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
                     )}
                   >
                     <item.icon className="mr-3 h-4 w-4" />
@@ -98,7 +100,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 {session ? (
                   <Button
                     variant="ghost"
-                    className="w-full justify-start px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    className="w-full justify-start px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary rounded-lg"
                     onClick={handleLogout}
                   >
                     <LogOut className="mr-3 h-4 w-4" />
@@ -116,11 +118,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex-1">
-            <main className={cn(
-              "min-h-screen",
-              "pt-10 lg:pt-0",
-              "px-3 sm:px-4 lg:px-6"
-            )}>
+            <main className="min-h-screen p-4 lg:p-6">
               {children}
             </main>
           </div>
