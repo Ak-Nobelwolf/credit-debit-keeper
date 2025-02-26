@@ -1,5 +1,5 @@
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Home, User, Settings, PieChart, Menu, X, Moon, Sun, LogOut, Phone, Info, LayoutDashboard } from "lucide-react";
@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LocalizationProvider } from "@/contexts/LocalizationContext";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = () => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -119,7 +119,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           <div className="flex-1">
             <main className="min-h-screen p-4 lg:p-6">
-              {children}
+              <Outlet />
             </main>
           </div>
         </div>
