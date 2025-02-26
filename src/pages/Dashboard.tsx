@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, DollarSign, TrendingUp, ArrowUpDown } from "lucide-react";
@@ -10,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useLocalization } from "@/contexts/LocalizationContext";
+import FinanceCalculator from "@/components/FinanceCalculator";
 
 const Dashboard = () => {
   const { formatCurrency } = useLocalization();
@@ -256,6 +256,14 @@ const Dashboard = () => {
                 </Select>
               </div>
             </div>
+          </motion.div>
+
+          <motion.div 
+            variants={itemVariants}
+            className="bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 rounded-lg p-6"
+          >
+            <h2 className="text-2xl font-bold mb-6">Financial Calculators</h2>
+            <FinanceCalculator />
           </motion.div>
 
           <motion.div 
