@@ -1,101 +1,200 @@
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/components/AuthProvider";
-import { useState } from "react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { ProfileImage } from "@/components/profile/ProfileImage";
+import { ProfileField } from "@/components/profile/ProfileField";
 
 const Profile = () => {
-  const { session } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: session?.user?.user_metadata?.full_name || "",
-    email: session?.user?.email || "",
-    phone: session?.user?.user_metadata?.phone || "",
+  const [loading, setLoading] = useState(true);
+  const [profileData, setProfileData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    dob: "",
+    member_since: "",
+    avatar_url: "",
   });
+  const [session, setSession] = useState<any>(null);
+  const navigate = useNavigate();
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+      setSession(session);
+      fetchProfile(session.user.id);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+      setSession(session);
+      fetchProfile(session.user.id);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const fetchProfile = async (userId: string) => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          full_name: formData.fullName,
-          phone: formData.phone,
-        },
-      });
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
       if (error) throw error;
-
-      toast.success("Profile updated successfully");
-      setIsEditing(false);
+      if (data) {
+        setProfileData({
+          name: data.name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          dob: data.dob || "",
+          member_since: new Date(data.member_since).toLocaleDateString(),
+          avatar_url: data.avatar_url || "",
+        });
+      }
     } catch (error: any) {
-      toast.error(error.message || "Error updating profile");
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !session) return;
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${session.user.id}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      setProfileData((prev) => ({ ...prev, avatar_url: publicUrl }));
+    } catch (error: any) {
+      toast.error("Error uploading image");
+    }
+  };
+
+  const handleSave = async () => {
+    if (!session) return;
+    
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          name: profileData.name,
+          email: profileData.email,
+          phone: profileData.phone,
+          dob: profileData.dob,
+          avatar_url: profileData.avatar_url,
+        })
+        .eq("id", session.user.id);
+
+      if (error) throw error;
+      toast.success("Profile updated successfully");
+      setIsEditing(false);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleFieldChange = (field: keyof typeof profileData) => (value: string) => {
+    setProfileData(prev => ({ ...prev, [field]: value }));
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="container mx-auto p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <h1 className="text-3xl font-bold mb-8">Profile</h1>
-        <Card className="p-6 max-w-2xl mx-auto">
-          <form onSubmit={handleUpdateProfile}>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  disabled={!isEditing}
-                />
-              </div>
+    <div className="bg-background p-3 sm:p-4 min-h-screen">
+      <div className="max-w-4xl mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h1 className="text-2xl font-bold">Profile</h1>
+          <Button 
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          >
+            {isEditing ? "Save Changes" : "Edit Profile"}
+          </Button>
+        </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+        <Card className="p-3 sm:p-5 overflow-hidden">
+          <div className="sm:flex sm:gap-6">
+            <div className="flex-shrink-0 mb-4 sm:mb-0">
+              <ProfileImage
+                avatarUrl={profileData.avatar_url}
+                isEditing={isEditing}
+                onImageUpload={handleImageUpload}
+              />
+            </div>
+
+            <div className="flex-grow">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ProfileField
+                  label="Name"
+                  id="name"
+                  value={profileData.name}
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("name")}
+                />
+                <ProfileField
+                  label="Email"
                   id="email"
+                  value={profileData.email}
                   type="email"
-                  value={formData.email}
-                  disabled
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("email")}
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
+                <ProfileField
+                  label="Phone Number"
                   id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  disabled={!isEditing}
+                  value={profileData.phone}
+                  type="tel"
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("phone")}
                 />
-              </div>
-
-              <div className="flex justify-end space-x-4">
-                {isEditing ? (
-                  <>
-                    <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">Save Changes</Button>
-                  </>
-                ) : (
-                  <Button type="button" onClick={() => setIsEditing(true)}>
-                    Edit Profile
-                  </Button>
-                )}
+                <ProfileField
+                  label="Date of Birth"
+                  id="dob"
+                  value={profileData.dob}
+                  type="date"
+                  isEditing={isEditing}
+                  onChange={handleFieldChange("dob")}
+                />
+                <ProfileField
+                  label="Member Since"
+                  id="member_since"
+                  value={profileData.member_since}
+                  isEditing={isEditing}
+                  readonly
+                />
               </div>
             </div>
-          </form>
+          </div>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };
