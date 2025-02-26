@@ -13,14 +13,15 @@ export const FloatingShape = () => {
         <Suspense fallback={null}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <Sphere args={[1, 32, 32]}>
+          <mesh>
+            <sphereGeometry args={[1, 32, 32]} />
             <meshStandardMaterial
               color="#4f46e5"
               wireframe
               transparent
               opacity={0.2}
             />
-          </Sphere>
+          </mesh>
           <OrbitControls
             enableZoom={false}
             autoRotate
