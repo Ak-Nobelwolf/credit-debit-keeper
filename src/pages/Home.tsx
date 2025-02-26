@@ -50,8 +50,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-card/50 backdrop-blur-sm p-6 rounded-lg shadow-lg"
-                whileHover={{ scale: 1.02 }}
+                className="bg-card p-6 rounded-lg shadow-lg"
               >
                 <AuthForm 
                   isSignUp={isSignUp}

@@ -1,30 +1,17 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { FloatingShape } from "@/components/ui/3d/FloatingShape";
+import { motion } from "framer-motion";
 
 const About = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   return (
-    <div className="relative min-h-screen" ref={containerRef}>
-      <FloatingShape />
+    <div className="relative min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto"
-          style={{ y, opacity }}
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
             About Us
@@ -34,7 +21,7 @@ const About = () => {
               We are committed to providing the best financial management tools to help you achieve your financial goals.
             </p>
             <motion.div 
-              className="bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-lg space-y-6"
+              className="bg-card p-8 rounded-lg shadow-lg space-y-6"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
