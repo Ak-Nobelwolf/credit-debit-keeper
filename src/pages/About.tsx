@@ -53,15 +53,14 @@ const About = () => {
             transition={{ delay: 0.8 }}
           >
             <Link to="/contact">
-              <Button 
-                size="lg" 
-                className="px-8"
-                variant="default"
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Contact Us
-              </Button>
+                <Button size="lg" className="px-8">
+                  Contact Us
+                </Button>
+              </motion.div>
             </Link>
           </motion.div>
         </motion.div>
