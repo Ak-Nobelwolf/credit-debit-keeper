@@ -11,6 +11,9 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import ResetPassword from "@/pages/ResetPassword";
 import Layout from "@/components/Layout";
+import Analytics from "@/pages/Analytics";
+import Profile from "@/pages/Profile";
+import Calculators from "@/pages/Calculators";
 
 function App() {
   return (
@@ -27,6 +30,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics"
+              element={
+                <ProtectedRoute>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="calculators"
+              element={
+                <ProtectedRoute>
+                  <Calculators />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
