@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 export const SavingsCalculator = () => {
+  const { formatCurrency } = useLocalization();
   const [initialDeposit, setInitialDeposit] = useState(1000);
   const [monthlyContribution, setMonthlyContribution] = useState(100);
   const [interestRate, setInterestRate] = useState(5);
@@ -47,7 +49,7 @@ export const SavingsCalculator = () => {
       
       <div className="space-y-4">
         <div>
-          <Label htmlFor="initialDeposit">Initial Deposit: ${initialDeposit.toLocaleString()}</Label>
+          <Label htmlFor="initialDeposit">Initial Deposit: {formatCurrency(initialDeposit)}</Label>
           <Slider 
             id="initialDeposit"
             min={0} 
@@ -66,7 +68,7 @@ export const SavingsCalculator = () => {
         </div>
         
         <div>
-          <Label htmlFor="monthlyContribution">Monthly Contribution: ${monthlyContribution}</Label>
+          <Label htmlFor="monthlyContribution">Monthly Contribution: {formatCurrency(monthlyContribution)}</Label>
           <Slider 
             id="monthlyContribution"
             min={0} 
@@ -130,15 +132,15 @@ export const SavingsCalculator = () => {
         <Card className="p-4 bg-primary/5 space-y-2">
           <div className="flex justify-between">
             <span className="font-medium">Future Value:</span>
-            <span className="font-bold">${futureValue.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(futureValue)}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Total Contributions:</span>
-            <span className="font-bold">${totalContributions?.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(totalContributions || 0)}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Interest Earned:</span>
-            <span className="font-bold">${interestEarned?.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(interestEarned || 0)}</span>
           </div>
         </Card>
       )}

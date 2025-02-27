@@ -70,22 +70,28 @@ export const ContactForm = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('contact-form', {
-        body: JSON.stringify(formData)
-      });
+      // Direct database insertion rather than using edge function
+      const { error } = await supabase
+        .from('contact_form_submissions')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+            ip_address: 'client'  // Using a placeholder since we can't get client IP on client side
+          }
+        ]);
 
       if (error) {
-        if (error.message.includes('429')) {
-          toast.error("Too many requests. Please try again later.");
-        } else {
-          toast.error("Failed to send message. Please try again later.");
-        }
+        console.error("Submission error:", error);
+        toast.error("Failed to send message. Please try again later.");
         return;
       }
 
       toast.success("Message sent successfully! We'll get back to you soon.");
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
+      console.error("Error:", error);
       toast.error("Failed to send message. Please try again later.");
     } finally {
       setIsLoading(false);

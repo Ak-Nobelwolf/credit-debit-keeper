@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { useLocalization } from "@/contexts/LocalizationContext";
 
 export const LoanCalculator = () => {
+  const { formatCurrency } = useLocalization();
   const [loanAmount, setLoanAmount] = useState(10000);
   const [interestRate, setInterestRate] = useState(5);
   const [loanTerm, setLoanTerm] = useState(5);
@@ -38,7 +40,7 @@ export const LoanCalculator = () => {
       
       <div className="space-y-4">
         <div>
-          <Label htmlFor="loanAmount">Loan Amount: ${loanAmount.toLocaleString()}</Label>
+          <Label htmlFor="loanAmount">Loan Amount: {formatCurrency(loanAmount)}</Label>
           <Slider 
             id="loanAmount"
             min={1000} 
@@ -102,15 +104,15 @@ export const LoanCalculator = () => {
         <Card className="p-4 bg-primary/5 space-y-2">
           <div className="flex justify-between">
             <span className="font-medium">Monthly Payment:</span>
-            <span className="font-bold">${monthlyPayment.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(monthlyPayment)}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Total Payment:</span>
-            <span className="font-bold">${totalPayment?.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(totalPayment || 0)}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Total Interest:</span>
-            <span className="font-bold">${totalInterest?.toFixed(2)}</span>
+            <span className="font-bold">{formatCurrency(totalInterest || 0)}</span>
           </div>
         </Card>
       )}

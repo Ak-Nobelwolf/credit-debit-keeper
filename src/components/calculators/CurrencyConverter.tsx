@@ -5,23 +5,24 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
-// Mock exchange rates - in a real app, these would come from an API
-const exchangeRates = {
-  USD: 1,
-  EUR: 0.85,
-  GBP: 0.73,
-  JPY: 110.22,
-  CAD: 1.25,
-  AUD: 1.35,
-  CNY: 6.45,
-  INR: 74.52,
-  BRL: 5.25,
-  ZAR: 14.75
+// Currency codes and names for the UI
+const currencies = {
+  USD: "US Dollar",
+  EUR: "Euro",
+  GBP: "British Pound",
+  JPY: "Japanese Yen",
+  CAD: "Canadian Dollar",
+  AUD: "Australian Dollar",
+  CNY: "Chinese Yuan",
+  INR: "Indian Rupee",
+  BRL: "Brazilian Real",
+  ZAR: "South African Rand"
 };
 
-type CurrencyCode = keyof typeof exchangeRates;
+type CurrencyCode = keyof typeof currencies;
 
 export const CurrencyConverter = () => {
   const [amount, setAmount] = useState(100);
@@ -29,25 +30,72 @@ export const CurrencyConverter = () => {
   const [toCurrency, setToCurrency] = useState<CurrencyCode>("EUR");
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  // Fetch exchange rates from API
+  const fetchExchangeRate = async () => {
+    setIsLoading(true);
+    try {
+      // Using Exchange Rate API (free tier)
+      const response = await fetch(
+        `https://open.er-api.com/v6/latest/${fromCurrency}`
+      );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch exchange rates");
+      }
+      
+      const data = await response.json();
+      
+      if (data.result === "success") {
+        const rate = data.rates[toCurrency];
+        setExchangeRate(rate);
+        setConvertedAmount(amount * rate);
+        setLastUpdated(new Date());
+      } else {
+        throw new Error("Failed to get exchange rates");
+      }
+    } catch (error) {
+      console.error("Exchange rate fetch error:", error);
+      toast.error("Failed to fetch exchange rates. Using estimated rates instead.");
+      
+      // Fallback to estimated rates if API fails
+      const fallbackRates = {
+        USD: 1,
+        EUR: 0.85,
+        GBP: 0.73,
+        JPY: 110.22,
+        CAD: 1.25,
+        AUD: 1.35,
+        CNY: 6.45,
+        INR: 74.52,
+        BRL: 5.25,
+        ZAR: 14.75
+      };
+      
+      // Calculate fallback exchange rate
+      const fromRate = fallbackRates[fromCurrency];
+      const toRate = fallbackRates[toCurrency];
+      const rate = toRate / fromRate;
+      
+      setExchangeRate(rate);
+      setConvertedAmount(amount * rate);
+      setLastUpdated(new Date());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle currency or amount changes
   useEffect(() => {
-    // Reset converted amount when currencies change
-    setConvertedAmount(null);
+    if (fromCurrency && toCurrency) {
+      setConvertedAmount(null);
+    }
   }, [fromCurrency, toCurrency, amount]);
 
   const handleConvert = () => {
-    // Get exchange rates for both currencies relative to USD
-    const fromRate = exchangeRates[fromCurrency];
-    const toRate = exchangeRates[toCurrency];
-    
-    // Calculate the direct exchange rate
-    const rate = toRate / fromRate;
-    
-    // Calculate the converted amount
-    const result = amount * rate;
-    
-    setExchangeRate(rate);
-    setConvertedAmount(result);
+    fetchExchangeRate();
   };
 
   const swapCurrencies = () => {
@@ -59,7 +107,7 @@ export const CurrencyConverter = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Currency Converter</h2>
       <p className="text-muted-foreground">
-        Convert between different currencies using current exchange rates.
+        Convert between different currencies using real-time exchange rates.
       </p>
       
       <div className="space-y-4">
@@ -85,9 +133,9 @@ export const CurrencyConverter = () => {
                 <SelectValue placeholder="Select currency" />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(exchangeRates).map((currency) => (
-                  <SelectItem key={currency} value={currency}>
-                    {currency}
+                {Object.entries(currencies).map(([code, name]) => (
+                  <SelectItem key={code} value={code}>
+                    {code} - {name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -114,9 +162,9 @@ export const CurrencyConverter = () => {
                 <SelectValue placeholder="Select currency" />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(exchangeRates).map((currency) => (
-                  <SelectItem key={currency} value={currency}>
-                    {currency}
+                {Object.entries(currencies).map(([code, name]) => (
+                  <SelectItem key={code} value={code}>
+                    {code} - {name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -124,7 +172,19 @@ export const CurrencyConverter = () => {
           </div>
         </div>
         
-        <Button onClick={handleConvert} className="w-full">Convert</Button>
+        <Button 
+          onClick={handleConvert} 
+          className="w-full" 
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Loading...
+            </>
+          ) : (
+            "Convert"
+          )}
+        </Button>
       </div>
       
       {convertedAmount !== null && (
@@ -143,6 +203,12 @@ export const CurrencyConverter = () => {
               1 {fromCurrency} = {exchangeRate?.toFixed(4)} {toCurrency}
             </span>
           </div>
+          {lastUpdated && (
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Last updated:</span>
+              <span>{lastUpdated.toLocaleString()}</span>
+            </div>
+          )}
         </Card>
       )}
     </div>
