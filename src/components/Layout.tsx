@@ -2,8 +2,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, User, Settings, PieChart, Menu, X, Moon, Sun, LogOut, Phone, Info, LayoutDashboard } from "lucide-react";
-import { useState } from "react";
+import { Home, User, Settings, PieChart, Menu, X, Moon, Sun, LogOut, Phone, Info, LayoutDashboard, Calculator } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const { theme, setTheme } = useTheme();
   const { session } = useAuth();
   const navigate = useNavigate();
+  const [mounted, setMounted] = useState(false);
+
+  // Fix dark mode by ensuring we only render theme toggler after mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const publicNavigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -26,6 +32,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const privateNavigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Analytics', href: '/analytics', icon: PieChart },
+    { name: 'Calculators', href: '/calculators', icon: Calculator },
     { name: 'Profile', href: '/profile', icon: User },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
@@ -66,17 +73,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Link to="/" className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                   Finance App
                 </Link>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                >
-                  {theme === "dark" ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
-                  )}
-                </Button>
+                {mounted && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4" />
+                    ) : (
+                      <Moon className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
               </div>
               <nav className="space-y-1.5 flex-1">
                 {navigation.map((item) => (
@@ -107,7 +116,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     Logout
                   </Button>
                 ) : (
-                  <Link to="/" className="w-full block">
+                  <Link to="/auth" className="w-full block">
                     <Button variant="default" className="w-full">
                       Sign In
                     </Button>

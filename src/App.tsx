@@ -17,6 +17,8 @@ import NotFound from "./pages/NotFound";
 import { useState } from "react";
 import { AuthProvider } from "./components/AuthProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import Auth from "./pages/Auth";
+import Calculators from "./pages/Calculators";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -35,6 +37,7 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/auth" element={<Auth />} />
 
                   {/* Protected Routes */}
                   <Route
@@ -42,6 +45,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/calculators"
+                    element={
+                      <ProtectedRoute>
+                        <Calculators />
                       </ProtectedRoute>
                     }
                   />
