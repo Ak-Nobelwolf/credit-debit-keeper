@@ -21,15 +21,31 @@ const ResetPassword = () => {
 
   // Check if we have a recovery token
   useEffect(() => {
-    const recoveryToken = localStorage.getItem("supabaseRecoveryToken");
+    const checkToken = async () => {
+      const recoveryToken = localStorage.getItem("supabaseRecoveryToken");
+      console.log("Reset page - Recovery token exists:", !!recoveryToken);
+      
+      if (!recoveryToken) {
+        toast.error("Invalid or expired password reset session");
+        navigate("/auth");
+        return;
+      }
+      
+      setHasToken(true);
+      
+      // Check if the token is valid by getting the user
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error("Error validating token:", error.message);
+        localStorage.removeItem("supabaseRecoveryToken");
+        toast.error("Your password reset link has expired. Please request a new one.");
+        navigate("/auth");
+      } else {
+        console.log("User validated:", data.user?.email);
+      }
+    };
     
-    if (!recoveryToken) {
-      toast.error("Invalid or expired password reset session");
-      navigate("/auth");
-      return;
-    }
-    
-    setHasToken(true);
+    checkToken();
   }, [navigate]);
 
   // Validate password

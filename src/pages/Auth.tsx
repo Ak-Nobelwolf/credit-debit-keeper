@@ -27,9 +27,12 @@ const Auth = () => {
 
   // Check if we're in a recovery flow
   useEffect(() => {
-    const params = new URLSearchParams(location.hash.substring(1));
+    // Extract token from URL hash or query parameters
+    const params = new URLSearchParams(location.hash.substring(1) || location.search);
     const type = params.get("type");
     const accessToken = params.get("access_token");
+
+    console.log("Auth page - URL params:", { type, accessToken });
     
     if (type === "recovery" && accessToken) {
       // Store the recovery token in localStorage
