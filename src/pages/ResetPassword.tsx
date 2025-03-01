@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,20 +16,21 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Extract the access token from the URL
+  // Check if we have a recovery token
   useEffect(() => {
-    const params = new URLSearchParams(location.hash.substring(1));
-    const accessToken = params.get("access_token");
-    const type = params.get("type");
+    const recoveryToken = localStorage.getItem("supabaseRecoveryToken");
     
-    if (type && type === "recovery" && accessToken) {
-      // Store the token in session
-      localStorage.setItem("supabaseRecoveryToken", accessToken);
+    if (!recoveryToken) {
+      toast.error("Invalid or expired password reset session");
+      navigate("/auth");
+      return;
     }
-  }, [location]);
+    
+    setHasToken(true);
+  }, [navigate]);
 
   // Validate password
   const validatePassword = (password: string) => {
@@ -90,16 +91,7 @@ const ResetPassword = () => {
     setLoading(true);
     
     try {
-      // Get the recovery token from storage
-      const accessToken = localStorage.getItem("supabaseRecoveryToken");
-      
-      if (!accessToken) {
-        toast.error("Password reset session expired. Please request a new password reset link.");
-        navigate("/auth");
-        return;
-      }
-      
-      // Update the password using the token
+      // Update the password using the auth API
       const { error } = await supabase.auth.updateUser({ 
         password: password 
       });
@@ -112,7 +104,11 @@ const ResetPassword = () => {
       localStorage.removeItem("supabaseRecoveryToken");
       
       toast.success("Password has been updated successfully");
-      navigate("/auth");
+      
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        navigate("/auth");
+      }, 2000);
     } catch (error: any) {
       toast.error(`Failed to update password: ${error.message}`);
     } finally {
@@ -126,6 +122,10 @@ const ResetPassword = () => {
     if (passwordStrength <= 3) return "bg-yellow-500";
     return "bg-green-500";
   };
+
+  if (!hasToken) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <div className="container max-w-md mx-auto p-4 py-20">

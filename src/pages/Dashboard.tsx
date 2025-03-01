@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, DollarSign, TrendingUp, ArrowUpDown } from "lucide-react";
@@ -34,7 +33,6 @@ const Dashboard = () => {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterType, setFilterType] = useState<"all" | "credit" | "debit">("all");
 
-  // Fetch transactions from Supabase
   useEffect(() => {
     const fetchTransactions = async () => {
       if (!session?.user) return;
@@ -52,42 +50,7 @@ const Dashboard = () => {
           return;
         }
         
-        if (data.length === 0) {
-          // If new user with no transactions, add some sample data
-          const sampleTransactions = [
-            {
-              type: "credit" as const,
-              amount: 5000,
-              description: "Salary",
-              category: "Salary",
-              date: new Date().toISOString().split("T")[0],
-              user_id: session.user.id
-            },
-            {
-              type: "debit" as const,
-              amount: 50,
-              description: "Dinner",
-              category: "Food",
-              date: new Date().toISOString().split("T")[0],
-              user_id: session.user.id
-            }
-          ];
-          
-          for (const transaction of sampleTransactions) {
-            await supabase.from('transactions').insert(transaction);
-          }
-          
-          // Fetch again after inserting sample data
-          const { data: newData } = await supabase
-            .from('transactions')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .order('date', { ascending: false });
-            
-          setTransactions(newData || []);
-        } else {
-          setTransactions(data);
-        }
+        setTransactions(data || []);
       } catch (error: any) {
         toast.error("Error loading transactions: " + error.message);
       } finally {
@@ -128,7 +91,6 @@ const Dashboard = () => {
         return;
       }
       
-      // Optimistically update UI
       setTransactions(prev => [data[0], ...prev]);
       toast.success("Transaction added successfully!");
     } catch (error: any) {

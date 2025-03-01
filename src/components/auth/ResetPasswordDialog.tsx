@@ -44,17 +44,17 @@ export const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogP
       // Include a custom email template for better appearance
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/reset-password`,
-        // The Supabase instance already renders an email with a better template than the default one
+        // The redirectTo parameter ensures the user is redirected to the correct reset page
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error("Failed to send reset email: " + error.message);
       } else {
         toast.success("Password reset instructions have been sent to your email");
         onOpenChange(false);
       }
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error("An unexpected error occurred: " + error.message);
     } finally {
       setIsResetting(false);
     }

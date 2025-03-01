@@ -4,12 +4,26 @@ import { motion } from "framer-motion";
 import AuthForm from "@/components/auth/AuthForm";
 import { ResetPasswordDialog } from "@/components/auth/ResetPasswordDialog";
 import { useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate("/dashboard");
+      }
+    };
+    
+    checkSession();
+  }, [navigate]);
 
   // Check if we're in a recovery flow
   useEffect(() => {
@@ -18,8 +32,13 @@ const Auth = () => {
     const accessToken = params.get("access_token");
     
     if (type === "recovery" && accessToken) {
+      // Store the recovery token in localStorage
+      localStorage.setItem("supabaseRecoveryToken", accessToken);
+      
       // Redirect to the dedicated reset password page
-      navigate("/reset-password" + location.hash);
+      navigate("/reset-password");
+      
+      toast.info("Please set your new password");
     }
   }, [location, navigate]);
 
