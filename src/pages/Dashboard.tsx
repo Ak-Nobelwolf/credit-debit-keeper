@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, DollarSign, TrendingUp, ArrowUpDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TransactionCard } from "@/components/TransactionCard";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { cn } from "@/lib/utils";
@@ -10,49 +10,130 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useLocalization } from "@/contexts/LocalizationContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { toast } from "sonner";
+
+interface Transaction {
+  id: number | string;
+  type: "credit" | "debit";
+  amount: number;
+  description: string;
+  category: string;
+  date: string;
+}
 
 const Dashboard = () => {
   const { formatCurrency } = useLocalization();
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: "credit" as const,
-      amount: 5000,
-      description: "Salary",
-      category: "Salary",
-      date: "2024-03-25",
-    },
-    {
-      id: 2,
-      type: "debit" as const,
-      amount: 50,
-      description: "Dinner",
-      category: "Food",
-      date: "2024-03-24",
-    },
-  ]);
+  const { session } = useAuth();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [sortBy, setSortBy] = useState<"date" | "amount" | "category">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterType, setFilterType] = useState<"all" | "credit" | "debit">("all");
 
+  // Fetch transactions from Supabase
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!session?.user) return;
+      
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('date', { ascending: false });
+        
+        if (error) {
+          toast.error("Failed to load transactions: " + error.message);
+          return;
+        }
+        
+        if (data.length === 0) {
+          // If new user with no transactions, add some sample data
+          const sampleTransactions = [
+            {
+              type: "credit" as const,
+              amount: 5000,
+              description: "Salary",
+              category: "Salary",
+              date: new Date().toISOString().split("T")[0],
+              user_id: session.user.id
+            },
+            {
+              type: "debit" as const,
+              amount: 50,
+              description: "Dinner",
+              category: "Food",
+              date: new Date().toISOString().split("T")[0],
+              user_id: session.user.id
+            }
+          ];
+          
+          for (const transaction of sampleTransactions) {
+            await supabase.from('transactions').insert(transaction);
+          }
+          
+          // Fetch again after inserting sample data
+          const { data: newData } = await supabase
+            .from('transactions')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .order('date', { ascending: false });
+            
+          setTransactions(newData || []);
+        } else {
+          setTransactions(data);
+        }
+      } catch (error: any) {
+        toast.error("Error loading transactions: " + error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [session]);
+
   const categories = Array.from(new Set(transactions.map(t => t.category)));
 
-  const addTransaction = (newTransaction: {
+  const addTransaction = async (newTransaction: {
     type: "credit" | "debit";
     amount: number;
     description: string;
     category: string;
   }) => {
-    setTransactions([
-      {
-        ...newTransaction,
-        id: transactions.length + 1,
-        date: new Date().toISOString().split("T")[0],
-      },
-      ...transactions,
-    ]);
+    if (!session?.user) {
+      toast.error("You must be logged in to add transactions.");
+      return;
+    }
+    
+    const transactionWithDate = {
+      ...newTransaction,
+      date: new Date().toISOString().split("T")[0],
+      user_id: session.user.id
+    };
+    
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert(transactionWithDate)
+        .select();
+        
+      if (error) {
+        toast.error("Failed to add transaction: " + error.message);
+        return;
+      }
+      
+      // Optimistically update UI
+      setTransactions(prev => [data[0], ...prev]);
+      toast.success("Transaction added successfully!");
+    } catch (error: any) {
+      toast.error("Error adding transaction: " + error.message);
+    }
   };
 
   const totalIncome = transactions
@@ -106,6 +187,17 @@ const Dashboard = () => {
       transition: { duration: 0.5 },
     },
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground">Loading your financial data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div 
@@ -185,12 +277,12 @@ const Dashboard = () => {
                     <TrendingUp className="h-6 w-6 text-blue-500" />
                   </div>
                   <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500">
-                    {((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1)}%
+                    {totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1) : "0"}%
                   </span>
                 </div>
                 <h3 className="text-sm font-medium text-muted-foreground">Savings Rate</h3>
                 <p className="text-2xl font-bold mt-1">
-                  {((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1)}%
+                  {totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1) : "0"}%
                 </p>
               </Card>
             </motion.div>

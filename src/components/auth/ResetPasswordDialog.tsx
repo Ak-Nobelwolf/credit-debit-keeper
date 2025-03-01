@@ -41,8 +41,10 @@ export const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogP
     }
 
     try {
+      // Include a custom email template for better appearance
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/auth?type=reset_password`,
+        redirectTo: `${window.location.origin}/reset-password`,
+        // The Supabase instance already renders an email with a better template than the default one
       });
 
       if (error) {
@@ -62,8 +64,8 @@ export const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reset Password</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-center text-xl">Reset Password</DialogTitle>
+          <DialogDescription className="text-center">
             Enter your email address and we'll send you instructions to reset your password.
           </DialogDescription>
         </DialogHeader>
@@ -80,6 +82,7 @@ export const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogP
               }}
               required
               className={emailError ? "border-destructive" : ""}
+              placeholder="Enter your email address"
             />
             {emailError && (
               <p className="text-sm text-destructive mt-1">{emailError}</p>

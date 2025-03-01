@@ -18,6 +18,7 @@ import { useState } from "react";
 import { AuthProvider } from "./components/AuthProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Calculators from "./pages/Calculators";
 import { LocalizationProvider } from "./contexts/LocalizationContext";
 
@@ -40,6 +41,7 @@ const App = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     {/* Protected Routes */}
                     <Route
