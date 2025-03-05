@@ -28,6 +28,10 @@ export const DashboardFilters = ({
   setFilterType,
   categories
 }: DashboardFiltersProps) => {
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
   return (
     <motion.div 
       variants={{
@@ -56,7 +60,7 @@ export const DashboardFilters = ({
           <Button
             variant="outline"
             className="w-full justify-between"
-            onClick={() => setSortOrder(current => current === "asc" ? "desc" : "asc")}
+            onClick={toggleSortOrder}
           >
             {sortOrder === "asc" ? "Ascending" : "Descending"}
             <ArrowUpDown className="h-4 w-4 ml-2" />

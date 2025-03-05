@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { LoaderCircle } from "lucide-react";
 
 interface TokenValidatorProps {
   children: React.ReactNode;
@@ -106,7 +106,7 @@ export const TokenValidator = ({ children, onValidToken }: TokenValidatorProps) 
   if (isValidating) {
     return (
       <Card className="p-8 flex flex-col items-center justify-center space-y-4">
-        <ReloadIcon className="h-10 w-10 animate-spin text-primary" />
+        <LoaderCircle className="h-10 w-10 animate-spin text-primary" />
         <p className="text-center text-lg">Validating your reset link...</p>
       </Card>
     );
