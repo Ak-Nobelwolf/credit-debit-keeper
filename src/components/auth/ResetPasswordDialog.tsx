@@ -41,8 +41,9 @@ export const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogP
     }
 
     try {
-      // Include the absolute URL for redirection
-      const redirectTo = `${window.location.origin}/auth`;
+      // Use the absolute URL of the app's root, not the auth page
+      // Supabase will append the necessary hash parameters
+      const redirectTo = window.location.origin;
       
       console.log("Sending reset email with redirect:", redirectTo);
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {

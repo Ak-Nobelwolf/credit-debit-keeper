@@ -27,12 +27,31 @@ const Auth = () => {
 
   // Check if we're in a recovery flow
   useEffect(() => {
-    // Extract token from URL hash or query parameters
-    const params = new URLSearchParams(location.hash.substring(1) || location.search);
-    const type = params.get("type");
-    const accessToken = params.get("access_token");
+    // Handle hash parameters for recovery flow
+    if (location.hash) {
+      const hashParams = new URLSearchParams(location.hash.substring(1));
+      const type = hashParams.get("type");
+      const accessToken = hashParams.get("access_token");
+      
+      console.log("Auth page - Hash params:", { type, accessToken: !!accessToken });
 
-    console.log("Auth page - URL params:", { type, accessToken });
+      if (type === "recovery" && accessToken) {
+        // Store the recovery token in localStorage
+        localStorage.setItem("supabaseRecoveryToken", accessToken);
+        
+        // Redirect to the dedicated reset password page
+        navigate("/reset-password");
+        
+        toast.info("Please set your new password");
+      }
+    }
+    
+    // Also handle URL query parameters as a fallback
+    const queryParams = new URLSearchParams(location.search);
+    const type = queryParams.get("type");
+    const accessToken = queryParams.get("access_token");
+    
+    console.log("Auth page - URL query params:", { type, accessToken: !!accessToken });
     
     if (type === "recovery" && accessToken) {
       // Store the recovery token in localStorage
