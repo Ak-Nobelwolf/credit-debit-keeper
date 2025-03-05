@@ -13,31 +13,34 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container max-w-md mx-auto p-4 py-20">
+    <div className="container max-w-md mx-auto px-4 py-8 sm:py-20">
       <TokenValidator onValidToken={() => setHasValidToken(true)}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="w-full shadow-lg">
-            <CardHeader className="space-y-1">
-              <div className="flex justify-center mb-4">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <KeyRound className="h-6 w-6 text-primary" />
+          <Card className="w-full shadow-lg border-2 border-primary/10">
+            <CardHeader className="space-y-3">
+              <div className="flex justify-center mb-2">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <KeyRound className="h-8 w-8 text-primary" />
                 </div>
               </div>
               <CardTitle className="text-2xl text-center">Reset Your Password</CardTitle>
               <CardDescription className="text-center">
-                Enter your new password below
+                Create a strong password to secure your account
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResetPasswordForm />
             </CardContent>
-            <CardFooter className="justify-center">
-              <Button variant="link" onClick={() => navigate("/auth")}>
+            <CardFooter className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Button variant="outline" onClick={() => navigate("/auth")}>
                 Return to login
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/")}>
+                Go to homepage
               </Button>
             </CardFooter>
           </Card>

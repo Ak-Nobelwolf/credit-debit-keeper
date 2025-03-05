@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useLocalization } from "@/contexts/LocalizationContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface Transaction {
   id: number;
@@ -17,27 +21,40 @@ interface Transaction {
 
 const Analytics = () => {
   const { formatCurrency } = useLocalization();
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    {
-      id: 1,
-      type: "credit",
-      amount: 5000,
-      description: "Salary",
-      category: "Salary",
-      date: "2024-03-25",
-    },
-    {
-      id: 2,
-      type: "debit",
-      amount: 50,
-      description: "Dinner",
-      category: "Food",
-      date: "2024-03-24",
-    },
-  ]);
+  const { session } = useAuth();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [timeRange, setTimeRange] = useState<"week" | "month" | "year">("month");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!session?.user) return;
+      
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('date', { ascending: false });
+        
+        if (error) {
+          toast.error("Failed to load transactions: " + error.message);
+          return;
+        }
+        
+        setTransactions(data || []);
+      } catch (error: any) {
+        toast.error("Error loading analytics data: " + error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [session]);
 
   const categories = Array.from(new Set(transactions.map(t => t.category)));
 
@@ -109,16 +126,32 @@ const Analytics = () => {
     return null;
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground">Analyzing your financial data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <motion.div 
+        className="max-w-6xl mx-auto space-y-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-bold">Analytics</h1>
-          <div className="flex gap-4">
+          <h1 className="text-2xl font-bold text-gradient-primary">Financial Analytics</h1>
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="space-y-2">
               <Label htmlFor="timeRange">Time Range</Label>
               <Select value={timeRange} onValueChange={(value: "week" | "month" | "year") => setTimeRange(value)}>
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-full sm:w-[120px]">
                   <SelectValue placeholder="Select range" />
                 </SelectTrigger>
                 <SelectContent>
@@ -131,7 +164,7 @@ const Analytics = () => {
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-full sm:w-[150px]">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,45 +180,65 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">Total Income</h3>
-            <p className="text-2xl font-bold text-green-500">{formatCurrency(totalIncome)}</p>
+        {transactions.length === 0 ? (
+          <Card className="p-8 text-center">
+            <h2 className="text-xl font-semibold mb-2">No transaction data</h2>
+            <p className="text-muted-foreground">Add some transactions to view analytics</p>
           </Card>
-          <Card className="p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
-            <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpenses)}</p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">Net Savings</h3>
-            <p className={`text-2xl font-bold ${netSavings >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {formatCurrency(netSavings)}
-            </p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-sm font-medium text-muted-foreground">Savings Rate</h3>
-            <p className="text-2xl font-bold text-blue-500">{savingsRate.toFixed(1)}%</p>
-          </Card>
-        </div>
+        ) : (
+          <>
+            {/* Summary Cards */}
+            <motion.div 
+              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Card className="p-4">
+                <h3 className="text-sm font-medium text-muted-foreground">Total Income</h3>
+                <p className="text-2xl font-bold text-green-500">{formatCurrency(totalIncome)}</p>
+              </Card>
+              <Card className="p-4">
+                <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
+                <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpenses)}</p>
+              </Card>
+              <Card className="p-4">
+                <h3 className="text-sm font-medium text-muted-foreground">Net Savings</h3>
+                <p className={`text-2xl font-bold ${netSavings >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {formatCurrency(netSavings)}
+                </p>
+              </Card>
+              <Card className="p-4">
+                <h3 className="text-sm font-medium text-muted-foreground">Savings Rate</h3>
+                <p className="text-2xl font-bold text-blue-500">{savingsRate.toFixed(1)}%</p>
+              </Card>
+            </motion.div>
 
-        {/* Charts */}
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Income vs Expenses</h2>
-          <div className="h-[400px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis tickFormatter={(value) => formatCurrency(value)} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="income" fill="#22c55e" name="Income" />
-                <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
+            {/* Charts */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Card className="p-4 sm:p-6">
+                <h2 className="text-lg font-semibold mb-4">Income vs Expenses</h2>
+                <div className="h-[400px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar dataKey="income" fill="#22c55e" name="Income" />
+                      <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            </motion.div>
+          </>
+        )}
+      </motion.div>
     </div>
   );
 };
