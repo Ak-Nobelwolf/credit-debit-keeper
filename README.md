@@ -1,69 +1,136 @@
-# Welcome to your Lovable project
 
-## Project info
+# Finance Management Application
 
-**URL**: https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85
+A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
-## How can I edit this code?
+## Live Demo
 
-There are several ways of editing your application.
+Visit the live application at: [https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85](https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85)
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85) and start prompting.
+### Authentication
+- Secure user registration and login with email/password
+- Password reset functionality
+- Protected routes for authenticated users
 
-Changes made via Lovable will be committed automatically to this repo.
+### Dashboard
+- Overview of financial status with key metrics:
+  - Total balance
+  - Monthly income
+  - Monthly expenses
+  - Savings rate
+- Transaction management:
+  - Add new income/expense transactions
+  - View transaction history
+  - Filter transactions by category and type
+  - Sort transactions by date, amount, or category
 
-**Use your preferred IDE**
+### Financial Calculators
+- Loan Calculator: Calculate monthly payments, total payments, and total interest
+- Savings Calculator: Project savings growth with regular deposits
+- Currency Converter: Convert between different currencies
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Profile Management
+- User profile customization
+- Account settings
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Technology Stack
 
-Follow these steps:
+### Frontend
+- React with TypeScript
+- Tailwind CSS for styling
+- Shadcn UI components
+- React Router for navigation
+- Framer Motion for animations
+- Tanstack React Query for data fetching
 
+### Backend
+- Supabase for authentication and database
+- PostgreSQL database with Row Level Security
+- Real-time data synchronization
+
+## Getting Started
+
+### Prerequisites
+- Node.js & npm installed
+
+### Installation
+
+1. Clone the repository:
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone <repository-url>
+cd <project-directory>
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install dependencies:
+```sh
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+- `/src` - Source code
+  - `/components` - Reusable UI components
+  - `/contexts` - React context providers
+  - `/hooks` - Custom React hooks
+  - `/integrations` - Third-party service integrations (Supabase)
+  - `/lib` - Utility functions
+  - `/pages` - Application pages
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Key Features In Detail
 
-## What technologies are used for this project?
+### Transaction Management
+Users can add, view, and filter financial transactions. Each transaction includes:
+- Type (income/expense)
+- Amount
+- Description
+- Category
+- Date
 
-This project is built with .
+### Financial Calculators
+The application includes three specialized calculators:
+1. **Loan Calculator**: Users can calculate loan payments by entering:
+   - Loan amount
+   - Interest rate
+   - Loan term
+   
+2. **Savings Calculator**: Projects future savings growth based on:
+   - Initial deposit
+   - Regular contributions
+   - Interest rate
+   - Time period
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+3. **Currency Converter**: Converts between different currencies with up-to-date exchange rates
 
-## How can I deploy this project?
+### Responsive Design
+The application is fully responsive and works seamlessly on:
+- Desktop computers
+- Tablets
+- Mobile phones
 
-Simply open [Lovable](https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85) and click on Share -> Publish.
+## Security Features
 
-## I want to use a custom domain - is that possible?
+- JWT-based authentication
+- Row Level Security in database
+- Password strength validation
+- Secure password reset flow
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Future Enhancements
+
+- Budget planning tools
+- Expense categorization with charts
+- Financial goals tracking
+- Investment portfolio management
+- Bill reminders and recurring transactions
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
