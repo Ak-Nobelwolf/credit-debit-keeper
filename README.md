@@ -7,6 +7,8 @@ A comprehensive finance management application built with React, TypeScript, and
 
 Visit the live application at: [https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85](https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85)
 
+Or check out the GitHub Pages deployment: [Your GitHub Pages URL will appear here after deployment]
+
 ## Features
 
 ### Authentication
@@ -75,6 +77,26 @@ npm run dev
 
 4. Open your browser and navigate to `http://localhost:8080`
 
+## Deployment
+
+### GitHub Pages Deployment
+
+This project is configured to deploy automatically to GitHub Pages using GitHub Actions.
+
+1. Push your changes to the main branch
+2. GitHub Actions will automatically build and deploy your application
+3. Your application will be available at `https://[your-username].github.io/[repository-name]/`
+
+### Manual Deployment
+
+To deploy manually:
+
+```sh
+npm run build
+```
+
+The built files will be in the `dist` directory, which can be deployed to any static hosting service.
+
 ## Project Structure
 
 - `/src` - Source code
@@ -134,3 +156,4 @@ The application is fully responsive and works seamlessly on:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
