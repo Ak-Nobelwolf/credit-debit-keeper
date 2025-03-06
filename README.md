@@ -1,6 +1,9 @@
+
 # Finance Management Application
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
+
+![Finance Dashboard](https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&auto=format&fit=crop&q=60)
 
 ## Live Demo
 
@@ -12,6 +15,8 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Secure user registration and login with email/password
 - Password reset functionality
 - Protected routes for authenticated users
+
+![Authentication Screen](https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop&q=60)
 
 ### Dashboard
 - Overview of financial status with key metrics:
@@ -25,10 +30,14 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
   - Filter transactions by category and type
   - Sort transactions by date, amount, or category
 
+![Dashboard Overview](https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&auto=format&fit=crop&q=60)
+
 ### Financial Calculators
 - Loan Calculator: Calculate monthly payments, total payments, and total interest
 - Savings Calculator: Project savings growth with regular deposits
 - Currency Converter: Convert between different currencies
+
+![Financial Calculators](https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60)
 
 ### Profile Management
 - User profile customization
@@ -48,6 +57,8 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Supabase for authentication and database
 - PostgreSQL database with Row Level Security
 - Real-time data synchronization
+
+![Tech Stack](https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=60)
 
 ## Getting Started
 
@@ -113,6 +124,8 @@ Users can add, view, and filter financial transactions. Each transaction include
 - Description
 - Category
 - Date
+
+![Transaction Management](https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop&q=60)
 
 ### Financial Calculators
 The application includes three specialized calculators:
