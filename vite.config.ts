@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  base: "./", // This is important for GitHub Pages deployment
+  base: mode === 'production' ? '/finance-management/' : '/', // Update this with your repository name
   plugins: [
     react(),
     mode === 'development' &&
@@ -22,3 +22,4 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+
