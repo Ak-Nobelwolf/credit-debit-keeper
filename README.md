@@ -1,4 +1,3 @@
-
 # Finance Management Application
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
@@ -7,7 +6,7 @@ A comprehensive finance management application built with React, TypeScript, and
 
 Visit the live application at: [https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85](https://lovable.dev/projects/bbd17021-f3f8-4333-9c3e-ff3d9f7d6b85)
 
-Or check out the GitHub Pages deployment: [Your GitHub Pages URL will appear here after deployment]
+Or check out the GitHub Pages deployment: [https://yourusername.github.io/credit-debit-keeper/](https://yourusername.github.io/credit-debit-keeper/)
 
 ## Features
 
@@ -156,4 +155,3 @@ The application is fully responsive and works seamlessly on:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-

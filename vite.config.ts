@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  base: mode === 'production' ? '/finance-management/' : '/', // Update this with your repository name
+  base: mode === 'production' ? '/credit-debit-keeper/' : '/', // Updated with correct repository name
   plugins: [
     react(),
     mode === 'development' &&
@@ -22,4 +22,3 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
-
