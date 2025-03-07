@@ -1,9 +1,10 @@
 
+
 # Finance Management Application
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
-![Finance Dashboard](https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&auto=format&fit=crop&q=60)
+![Finance Dashboard](/public/lovable-uploads/60b10a31-aa3d-432a-91f9-f261020ba81d.png)
 
 ## Live Demo
 
@@ -16,7 +17,7 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Password reset functionality
 - Protected routes for authenticated users
 
-![Authentication Screen](https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop&q=60)
+![Authentication Screen](/public/lovable-uploads/d2f7f242-668c-4503-9f22-96a7eeda5f48.png)
 
 ### Dashboard
 - Overview of financial status with key metrics:
@@ -30,18 +31,20 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
   - Filter transactions by category and type
   - Sort transactions by date, amount, or category
 
-![Dashboard Overview](https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&auto=format&fit=crop&q=60)
+![Dashboard Overview](/public/lovable-uploads/e9c35175-8403-4a98-8ccb-042249589854.png)
 
 ### Financial Calculators
 - Loan Calculator: Calculate monthly payments, total payments, and total interest
 - Savings Calculator: Project savings growth with regular deposits
 - Currency Converter: Convert between different currencies
 
-![Financial Calculators](https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60)
+![Financial Calculators](/public/lovable-uploads/23faeec7-f4ea-4c78-aaa1-e867546db587.png)
 
 ### Profile Management
 - User profile customization
 - Account settings
+
+![Profile Screen](/public/lovable-uploads/86a31502-6363-4825-a9ef-9781c537ff4f.png)
 
 ## Technology Stack
 
@@ -57,8 +60,6 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Supabase for authentication and database
 - PostgreSQL database with Row Level Security
 - Real-time data synchronization
-
-![Tech Stack](https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&auto=format&fit=crop&q=60)
 
 ## Getting Started
 
@@ -125,7 +126,15 @@ Users can add, view, and filter financial transactions. Each transaction include
 - Category
 - Date
 
-![Transaction Management](https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop&q=60)
+![Transaction Management](/public/lovable-uploads/67c4f24b-c8fa-4316-b8af-ac7dd8ead104.png)
+
+### Financial Analytics
+The application provides detailed analytics to help users understand their spending patterns:
+- Income vs. expenses comparison
+- Spending by category
+- Savings trend over time
+
+![Financial Analytics](/public/lovable-uploads/b614e392-9703-4bf2-84ed-93535ef14c91.png)
 
 ### Financial Calculators
 The application includes three specialized calculators:
@@ -155,6 +164,21 @@ The application is fully responsive and works seamlessly on:
 - Password strength validation
 - Secure password reset flow
 
+## Additional Features
+
+### Settings and Customization
+Users can customize their experience with:
+- Light/dark mode toggle
+- Currency preference selection
+- Notification settings
+
+![Settings Screen](/public/lovable-uploads/1a1a2496-a745-4584-94f6-9f712437a762.png)
+
+### Contact Us
+Easy communication with support team through a built-in contact form:
+
+![Contact Screen](/public/lovable-uploads/14e021c5-17ab-43fc-a4d6-a30b78b40913.png)
+
 ## Future Enhancements
 
 - Budget planning tools
@@ -162,3 +186,4 @@ The application is fully responsive and works seamlessly on:
 - Financial goals tracking
 - Investment portfolio management
 - Bill reminders and recurring transactions
+
