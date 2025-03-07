@@ -3,11 +3,14 @@
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
-![Finance Dashboard](/public/Home%20Page.png)
+## Overview
 
-## Live Demo
-
-Visit the live application at: [Finance App - Credit and Debit Keeper](https://ak-nobelwolf.github.io/credit-debit-keeper/)
+This application offers an all-in-one solution for personal finance management, allowing users to:
+- Track income and expenses
+- Analyze spending patterns
+- Use financial calculators for loans, savings, and currency conversion
+- Manage their user profile
+- Customize application settings
 
 ## Features
 
@@ -33,18 +36,39 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 
 ![Dashboard Overview](/public/Dashboard%20Page.png)
 
+### Financial Analytics
+The application provides detailed analytics to help users understand their spending patterns:
+- Income vs. expenses comparison
+- Spending by category
+- Savings trend over time
+
+![Financial Analytics](/public/Analytics%20Page.png)
+
 ### Financial Calculators
-- Loan Calculator: Calculate monthly payments, total payments, and total interest
-- Savings Calculator: Project savings growth with regular deposits
-- Currency Converter: Convert between different currencies
+Three specialized calculators to assist with financial planning:
+1. **Loan Calculator**: Calculate monthly payments, total payments, and total interest
+2. **Savings Calculator**: Project savings growth with regular deposits
+3. **Currency Converter**: Convert between different currencies
 
 ![Financial Calculators](/public/Calculators%20Page.png)
 
 ### Profile Management
 - User profile customization
 - Account settings
+- Profile picture upload
 
 ![Profile Screen](/public/Profile%20Page.png)
+
+### Settings
+- Light/dark mode toggle
+- Currency preference selection
+
+![Settings Screen](/public/Settings%20Page.png)
+
+### Contact Support
+- Easy communication with support team through a built-in contact form
+
+![Contact Screen](/public/Contact%20Us%20Page.png)
 
 ## Technology Stack
 
@@ -60,6 +84,10 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Supabase for authentication and database
 - PostgreSQL database with Row Level Security
 - Real-time data synchronization
+
+## Live Demo
+
+Visit the live application at: [Finance App - Credit and Debit Keeper](https://ak-nobelwolf.github.io/credit-debit-keeper/)
 
 ## Getting Started
 
@@ -116,73 +144,10 @@ The built files will be in the `dist` directory, which can be deployed to any st
   - `/lib` - Utility functions
   - `/pages` - Application pages
 
-## Key Features In Detail
-
-### Transaction Management
-Users can add, view, and filter financial transactions. Each transaction includes:
-- Type (income/expense)
-- Amount
-- Description
-- Category
-- Date
-
-![Transaction Management](/public/Dashboard%20Page.png)
-
-### Financial Analytics
-The application provides detailed analytics to help users understand their spending patterns:
-- Income vs. expenses comparison
-- Spending by category
-- Savings trend over time
-
-![Financial Analytics](/public/Analytics%20Page.png)
-
-### Financial Calculators
-The application includes three specialized calculators:
-1. **Loan Calculator**: Users can calculate loan payments by entering:
-   - Loan amount
-   - Interest rate
-   - Loan term
-   
-2. **Savings Calculator**: Projects future savings growth based on:
-   - Initial deposit
-   - Regular contributions
-   - Interest rate
-   - Time period
-
-3. **Currency Converter**: Converts between different currencies with up-to-date exchange rates
-
-### Responsive Design
-The application is fully responsive and works seamlessly on:
-- Desktop computers
-- Tablets
-- Mobile phones
-
-## Security Features
-
-- JWT-based authentication
-- Row Level Security in database
-- Password strength validation
-- Secure password reset flow
-
-## Additional Features
-
-### Settings and Customization
-Users can customize their experience with:
-- Light/dark mode toggle
-- Currency preference selection
-- Notification settings
-
-![Settings Screen](/public/Settings%20Page.png)
-
-### Contact Us
-Easy communication with support team through a built-in contact form:
-
-![Contact Screen](/public/Contact%20Us%20Page.png)
-
 ## Future Enhancements
 
 - Budget planning tools
-- Expense categorization with charts
+- Expense categorization with more detailed charts
 - Financial goals tracking
 - Investment portfolio management
 - Bill reminders and recurring transactions
