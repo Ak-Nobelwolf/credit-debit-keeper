@@ -1,5 +1,4 @@
 
-
 # Finance Management Application
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
@@ -186,4 +185,3 @@ Easy communication with support team through a built-in contact form:
 - Financial goals tracking
 - Investment portfolio management
 - Bill reminders and recurring transactions
-
