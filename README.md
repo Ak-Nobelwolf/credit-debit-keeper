@@ -3,7 +3,7 @@
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
-![Finance Dashboard](/public/Dashboard%20Page.png)
+![Finance Dashboard](/public/Home%20Page.png)
 
 ## Live Demo
 
@@ -17,6 +17,7 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Protected routes for authenticated users
 
 ![Authentication Screen](/public/Login%20Page.png)
+![SignUp Screen](/public/Create%20Account%20Page.png)
 
 ### Dashboard
 - Overview of financial status with key metrics:
