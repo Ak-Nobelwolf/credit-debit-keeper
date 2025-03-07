@@ -3,7 +3,7 @@
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
-![Finance Dashboard](/public/lovable-uploads/60b10a31-aa3d-432a-91f9-f261020ba81d.png)
+![Finance Dashboard](/public/Dashboard%20Page.png)
 
 ## Live Demo
 
@@ -16,7 +16,7 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
 - Password reset functionality
 - Protected routes for authenticated users
 
-![Authentication Screen](/public/lovable-uploads/d2f7f242-668c-4503-9f22-96a7eeda5f48.png)
+![Authentication Screen](/public/Login%20Page.png)
 
 ### Dashboard
 - Overview of financial status with key metrics:
@@ -30,20 +30,20 @@ Visit the live application at: [Finance App - Credit and Debit Keeper](https://a
   - Filter transactions by category and type
   - Sort transactions by date, amount, or category
 
-![Dashboard Overview](/public/lovable-uploads/e9c35175-8403-4a98-8ccb-042249589854.png)
+![Dashboard Overview](/public/Dashboard%20Page.png)
 
 ### Financial Calculators
 - Loan Calculator: Calculate monthly payments, total payments, and total interest
 - Savings Calculator: Project savings growth with regular deposits
 - Currency Converter: Convert between different currencies
 
-![Financial Calculators](/public/lovable-uploads/23faeec7-f4ea-4c78-aaa1-e867546db587.png)
+![Financial Calculators](/public/Calculators%20Page.png)
 
 ### Profile Management
 - User profile customization
 - Account settings
 
-![Profile Screen](/public/lovable-uploads/86a31502-6363-4825-a9ef-9781c537ff4f.png)
+![Profile Screen](/public/Profile%20Page.png)
 
 ## Technology Stack
 
@@ -125,7 +125,7 @@ Users can add, view, and filter financial transactions. Each transaction include
 - Category
 - Date
 
-![Transaction Management](/public/lovable-uploads/67c4f24b-c8fa-4316-b8af-ac7dd8ead104.png)
+![Transaction Management](/public/Dashboard%20Page.png)
 
 ### Financial Analytics
 The application provides detailed analytics to help users understand their spending patterns:
@@ -133,7 +133,7 @@ The application provides detailed analytics to help users understand their spend
 - Spending by category
 - Savings trend over time
 
-![Financial Analytics](/public/lovable-uploads/b614e392-9703-4bf2-84ed-93535ef14c91.png)
+![Financial Analytics](/public/Analytics%20Page.png)
 
 ### Financial Calculators
 The application includes three specialized calculators:
@@ -171,12 +171,12 @@ Users can customize their experience with:
 - Currency preference selection
 - Notification settings
 
-![Settings Screen](/public/lovable-uploads/1a1a2496-a745-4584-94f6-9f712437a762.png)
+![Settings Screen](/public/Settings%20Page.png)
 
 ### Contact Us
 Easy communication with support team through a built-in contact form:
 
-![Contact Screen](/public/lovable-uploads/14e021c5-17ab-43fc-a4d6-a30b78b40913.png)
+![Contact Screen](/public/Contact%20Us%20Page.png)
 
 ## Future Enhancements
 
