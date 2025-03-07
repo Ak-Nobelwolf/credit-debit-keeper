@@ -3,6 +3,8 @@
 
 A comprehensive finance management application built with React, TypeScript, and Supabase for backend services. This application helps users manage their finances by tracking income, expenses, and providing financial calculators.
 
+![Home Screen](/public/Home%20Page.png)
+
 ## Overview
 
 This application offers an all-in-one solution for personal finance management, allowing users to:
